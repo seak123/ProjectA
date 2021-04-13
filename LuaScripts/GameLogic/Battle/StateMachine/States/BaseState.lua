@@ -9,7 +9,7 @@ BaseState.StateStage = {
     GameEnd = 6
 }
 
-function BaseState:ctor()
+function BaseState:ctor(machine)
 end
 
 function BaseState:OnEnter()

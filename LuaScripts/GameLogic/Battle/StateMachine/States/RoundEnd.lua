@@ -1,7 +1,8 @@
 local Base = require("GameLogic.Battle.StateMachine.States.BaseState")
 local RoundEnd = class("RoundEnd", Base)
 
-function RoundEnd:ctor()
+function RoundEnd:ctor(machine)
+    self.machine = machine
     self.nextState = Base.StateStage.NoneStage
 end
 

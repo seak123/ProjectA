@@ -7,17 +7,19 @@ local RoundEnd = require("GameLogic.Battle.StateMachine.States.RoundEnd")
 local GameEnd = require("GameLogic.Battle.StateMachine.States.GameEnd")
 
 function Machine:ctor()
-    self.curState = nil
     self.states = {}
-    self.states[BaseState.StateStage.PreGame] = PreGame.new()
-    self.states[BaseState.StateStage.RoundBegin] = RoundBegin.new()
-    self.states[BaseState.StateStage.PlayCard] = PlayCard.new()
-    self.states[BaseState.StateStage.RoundEnd] = RoundEnd.new()
-    self.states[BaseState.StateStage.GameEnd] = GameEnd.new()
+    self.states[BaseState.StateStage.PreGame] = PreGame.new(self)
+    self.states[BaseState.StateStage.RoundBegin] = RoundBegin.new(self)
+    self.states[BaseState.StateStage.PlayCard] = PlayCard.new(self)
+    self.states[BaseState.StateStage.RoundEnd] = RoundEnd.new(self)
+    self.states[BaseState.StateStage.GameEnd] = GameEnd.new(self)
+
+    self.curState = nil
+    self.curAct = 1 -- 行动方
 end
 
-function Machine:InputPlayerOrder()
-    self.curState:InputOrder()
+function Machine:InputPlayerOrder(orderVO)
+    self.curState:InputOrder(orderVO)
     while self.curState:NextState() ~= BaseState.StateStage.NoneStage do
         self:SwitchState(self.curState:NextState())
     end

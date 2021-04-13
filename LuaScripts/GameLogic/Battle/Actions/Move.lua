@@ -9,7 +9,7 @@ Move.MoveType = {
 function Move:ctor()
 end
 
-function Move:Execute()
+function Move:Execute(caster,path)
 end
 
 return Move

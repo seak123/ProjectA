@@ -1,7 +1,8 @@
 local Base = require("GameLogic.Battle.StateMachine.States.BaseState")
 local PlayCard = class("PlayCard", Base)
 
-function PlayCard:ctor()
+function PlayCard:ctor(machine)
+    self.machine = machine
     self.nextState = Base.StateStage.NoneStage
 end
 
@@ -11,7 +12,7 @@ end
 function PlayCard:OnLeave()
 end
 
-function PlayCard:InputOrder()
+function PlayCard:InputOrder(orderVO)
 end
 
 function PlayCard:NextState()
