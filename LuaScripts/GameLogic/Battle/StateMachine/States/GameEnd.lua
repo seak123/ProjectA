@@ -1,8 +1,7 @@
 local Base = require("GameLogic.Battle.StateMachine.States.BaseState")
 local GameEnd = class("GameEnd", Base)
 
-function GameEnd:ctor(machine)
-    self.machine = machine
+function GameEnd:ctor()
     self.nextState = Base.StateStage.NoneStage
 end
 
@@ -12,7 +11,7 @@ end
 function GameEnd:OnLeave()
 end
 
-function GameEnd:InputOrder()
+function GameEnd:InputOrder(orderVO)
 end
 
 function GameEnd:NextState()

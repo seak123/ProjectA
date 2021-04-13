@@ -1,7 +1,6 @@
 local LuaBehaviour = require("GameCore.Frame.LuaBehaviour")
 local MainUIPanel = class("MainUIPanel", LuaBehaviour)
 local BattleLib = CS.BattleLuaLibrary
-local BattleSession = require("GameLogic.Battle.BattleSession")
 
 local setting = {
     Elements = {
@@ -27,7 +26,6 @@ end
 
 function MainUIPanel:OnReqBattle()
     BattleLib.ReqEnterBattle()
-    BattleSession.StartBattle()
 end
 
 return MainUIPanel

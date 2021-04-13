@@ -13,7 +13,7 @@ function PreGame:OnEnter()
     -- Init map
     curSession.map:InitMap(sessVO.MapVO)
     -- Create all units
-    for i = 0, sessVO.Units.Length - 1 do
+    for i = 0, sessVO.Units.Count - 1 do
         curSession.field:CreateUnit(sessVO.Units[i])
     end
 end

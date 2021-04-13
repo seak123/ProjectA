@@ -10,7 +10,7 @@ end
 function Map:InitMap(mapVO)
     self.mapLength = mapVO.Length
     self.mapWidth = mapVO.Width
-    for i = 0, mapVO.Grids.Length - 1 do
+    for i = 0, mapVO.Grids.Count - 1 do
         local gridVO = mapVO.Grids[i]
         local grid = Grid.new(gridVO)
         self.grids[self:Coord2Index(gridVO.Coord)] = grid
