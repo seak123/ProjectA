@@ -12,4 +12,17 @@ BaseState.StateStage = {
 function BaseState:ctor()
 end
 
+function BaseState:OnEnter()
+end
+
+function BaseState:NextState()
+    return self.StateStage.NoneStage
+end
+
+function BaseState:OnLeave()
+end
+
+function BaseState:InputOrder()
+end
+
 return BaseState

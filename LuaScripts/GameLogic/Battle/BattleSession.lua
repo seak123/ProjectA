@@ -1,6 +1,7 @@
 local BattleSession = class("BattleSession")
-local StateMachine = require("LuaScripts.GameLogic.Battle.StateMachine.StateMachine")
-local BattleField = require("LuaScripts.GameLogic.Battle.BattleField")
+local StateMachine = require("GameLogic.Battle.StateMachine.StateMachine")
+local BaseState = require("GameLogic.Battle.StateMachine.States.BaseState")
+local BattleField = require("GameLogic.Battle.BattleField")
 local BattleLib = CS.BattleLuaLibrary
 
 function BattleSession:ctor()
@@ -8,12 +9,13 @@ function BattleSession:ctor()
     self.field = BattleField.new()
 end
 
-function BattleSession:InputOrder()
-    self.stateMachine:InputPlayerOperation()
+function BattleSession:InputOrder(order)
+    self.stateMachine:InputPlayerOrder(order)
 end
 
 function BattleSession.StartBattle()
     _G.curSession = BattleSession.new()
+    _G.curSession.stateMachine:SwitchState(BaseState.StateStage.PreGame)
 end
 
 return BattleSession
