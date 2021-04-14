@@ -1,6 +1,13 @@
 local Map = class("BattleMap")
 local Grid = require("GameLogic.Battle.Map.MapGrid")
 
+Map.Direction = {
+    North = 0, -- Z positive
+    West = 1, -- X negative
+    Sourth = 2, -- Z negative
+    East = 3 -- X positive
+}
+
 function Map:ctor()
     self.grids = {}
     self.mapLength = 0 -- Z axis
@@ -18,7 +25,7 @@ function Map:InitMap(mapVO)
 end
 -------- game logic -----------
 function Map:MoveUnit(unit, direction)
-    unit:OnMove(unit, unit)
+    unit:PostMove()
 end
 -------------------------------
 
@@ -28,6 +35,14 @@ function Map:IsCoordValid(vector)
 end
 function Map:Coord2Index(vector)
     return vector.y * self.mapWidth + vector.x
+end
+function Map.GetAdjacentPos(pos, direction)
+    if direction == Map.Direction.North then
+        return {x = pos.x, y = pos.y + 1}
+    elseif direction == Map.Direction.East then
+        return {}
+    elseif direction == Map.Direction.West then
+    end
 end
 -------- utils end ------------
 
