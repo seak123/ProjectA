@@ -40,8 +40,11 @@ function Map.GetAdjacentPos(pos, direction)
     if direction == Map.Direction.North then
         return {x = pos.x, y = pos.y + 1}
     elseif direction == Map.Direction.East then
-        return {}
+        return {x = pos.x + 1, y = pos.y}
     elseif direction == Map.Direction.West then
+        return {x = pos.x - 1, y = pos.y}
+    else
+        return {x = pos.x, y = pos.y - 1}
     end
 end
 -------- utils end ------------
