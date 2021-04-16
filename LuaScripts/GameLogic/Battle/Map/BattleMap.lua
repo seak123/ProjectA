@@ -1,11 +1,9 @@
 local Map = class("BattleMap")
 local Grid = require("GameLogic.Battle.Map.MapGrid")
 
-Map.Direction = {
-    North = 0, -- Z positive
-    West = 1, -- X negative
-    Sourth = 2, -- Z negative
-    East = 3 -- X positive
+Map.GridAttr = {
+    Walkable = 1,
+    Obstructive = 2
 }
 
 function Map:ctor()
@@ -21,6 +19,8 @@ function Map:InitMap(mapVO)
         local gridVO = mapVO.Grids[i]
         local grid = Grid.new(gridVO)
         self.grids[self:Coord2Index(gridVO.Coord)] = grid
+        local test = CS.BattleMapAttr
+        print("grid can walk: " .. tostring(Math.bitAND(gridVO.GridAttr, Map.GridAttr.Walkable)))
     end
 end
 -------- game logic -----------
@@ -37,11 +37,11 @@ function Map:Coord2Index(vector)
     return vector.y * self.mapWidth + vector.x
 end
 function Map.GetAdjacentPos(pos, direction)
-    if direction == Map.Direction.North then
+    if direction == CS.BattleDirection.North then
         return {x = pos.x, y = pos.y + 1}
-    elseif direction == Map.Direction.East then
+    elseif direction == CS.BattleDirection.East then
         return {x = pos.x + 1, y = pos.y}
-    elseif direction == Map.Direction.West then
+    elseif direction == CS.BattleDirection.West then
         return {x = pos.x - 1, y = pos.y}
     else
         return {x = pos.x, y = pos.y - 1}
