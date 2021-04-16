@@ -20,10 +20,14 @@ end
 function Map:MoveUnit(unit, direction)
     local goal = self.GetAdjacentPos(unit.transform.position, direction)
     local index = self:Coord2Index(goal)
-    if self.grids[index] ~= nil then
-        if self.grids[index]:IsWalkable() then
+    local curGrid = self.grids[self:Coord2Index(unit.transform.position)]
+    local grid = self.grids[index]
+    if grid ~= nil then
+        if grid:IsWalkable() then
             unit.transform.position = goal
             unit.transform.direction = direction
+            curGrid.standingUnit = nil
+            grid.standingUnit = unit
             unit:PostMove()
         else
             Debug.Error("Grid cannot move on")
