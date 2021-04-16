@@ -1,11 +1,6 @@
 local Map = class("BattleMap")
 local Grid = require("GameLogic.Battle.Map.MapGrid")
 
-Map.GridAttr = {
-    Walkable = 1,
-    Obstructive = 2
-}
-
 function Map:ctor()
     self.grids = {}
     self.mapLength = 0 -- Z axis
@@ -19,20 +14,27 @@ function Map:InitMap(mapVO)
         local gridVO = mapVO.Grids[i]
         local grid = Grid.new(gridVO)
         self.grids[self:Coord2Index(gridVO.Coord)] = grid
-        local test = CS.BattleMapAttr
-        print("grid can walk: " .. tostring(Math.bitAND(gridVO.GridAttr, Map.GridAttr.Walkable)))
     end
 end
 -------- game logic -----------
 function Map:MoveUnit(unit, direction)
-    unit:PostMove()
+    local goal = self.GetAdjacentPos(unit.transform.position, direction)
+    local index = self:Coord2Index(goal)
+    if self.grids[index] ~= nil then
+        if self.grids[index]:IsWalkable() then
+            unit.transform.position = goal
+            unit.transform.direction = direction
+            unit:PostMove()
+        else
+            Debug.Error("Grid cannot move on")
+        end
+    else
+        Debug.Error("Move unit failed")
+    end
 end
 -------------------------------
 
 -------- utils start ----------
-function Map:IsCoordValid(vector)
-    return vector.x >= 0 and vector.x < self.mapWidth and vector.y >= 0 and vector.y < self.mapLength
-end
 function Map:Coord2Index(vector)
     return vector.y * self.mapWidth + vector.x
 end
