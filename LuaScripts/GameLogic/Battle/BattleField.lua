@@ -2,22 +2,37 @@ local Field = class("BattleField")
 local BattleUnit = require("GameLogic.Battle.Unit.BattleUnit")
 
 function Field:ctor()
-    -- 1 is friend 2 is enemy
-    self.units = {{}, {}}
+    self.units = {}
+    self.unitCounter = 0
 end
 
 function Field:CreateUnit(unitVO)
     local unit = BattleUnit.new(unitVO)
-    self.units[unitVO.Camp][unitVO.Rid] = unit
+    self.unitCounter = self.unitCounter + 1
+    unit.uid = self.unitCounter
+    self.units[unit.uid] = unit
 end
 
 ---------- Utils start ---------------
 function Field:ForeachUnit(func)
-    for k, v in pairs(self.units[1]) do
+    for k, v in pairs(self.units) do
         func(v)
     end
-    for k, v in pairs(self.units[2]) do
-        func(v)
+end
+
+function Field:GetUnit(condition)
+    for k, v in pairs(self.units) do
+        if condition(v) then
+            return v
+        end
+    end
+end
+
+function Field:GetUnitByUid(uid)
+    for k, v in pairs(self.units) do
+        if v.uid == uid then
+            return v
+        end
     end
 end
 ---------- Utils end -----------------

@@ -7,11 +7,13 @@ function RoundBegin:ctor(machine)
 end
 
 function RoundBegin:OnEnter()
+    Debug.Log("Enter RoundBegin State")
     curSession.field:ForeachUnit(
         function(unit)
             unit:OnRoundBegin()
         end
     )
+    EventManager:Emit(EventConst.ON_BATTLE_ROUND_BEGIN)
     self.nextState = Base.StateStage.PlayCard
 end
 

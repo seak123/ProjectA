@@ -2,9 +2,11 @@ local Base = require("GameLogic.Battle.Unit.BaseUnit")
 local Unit = class("BattleUnit", Base)
 local Property = require("GameLogic.Battle.Unit.Component.Property")
 local Transform = require("GameLogic.Battle.Unit.Component.Transform")
+local CardEntity = require("GameLogic.Battle.Card.CardEntity")
 
 function Unit:ctor(unitVO)
     self.vo = unitVO
+    self.uid = 0
     self.handCards = {}
     self.cardPile = {}
     self.discardPile = {}
@@ -14,9 +16,19 @@ end
 function Unit:InitComponents()
     self.property = Property.new(self)
     self.transform = Transform.new(self)
+
+    for i = 0, self.vo.Cards.Count - 1 do
+        local card = CardEntity.new(self.vo.Cards[i])
+        card.uid = i + 1
+        table.insert(self.cardPile, card)
+    end
 end
 
 function Unit:DrawACard()
+    if #self.cardPile > 0 then
+        table.insert(self.handCards, self.cardPile[1])
+        table.remove(self.cardPile, 1)
+    end
 end
 
 function Unit:OnRoundBegin()

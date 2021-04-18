@@ -15,14 +15,15 @@ function Machine:ctor()
     self.states[BaseState.StateStage.GameEnd] = GameEnd.new(self)
 
     self.curState = nil
-    self.curAct = 1 -- 行动方
+    self.curActCamp = 1 -- 行动方
+    self.curOpUnit = nil -- 操作单位
+
+    EventManager:On(EventConst.ON_SELECT_OP_UNIT, self.OnSelectOpUnit, self)
 end
 
 function Machine:InputPlayerOrder(orderVO)
     self.curState:InputOrder(orderVO)
-    while self.curState:NextState() ~= BaseState.StateStage.NoneStage do
-        self:SwitchState(self.curState:NextState())
-    end
+    self:RunMachine()
 end
 
 function Machine:SwitchState(nextState)
@@ -31,6 +32,17 @@ function Machine:SwitchState(nextState)
     end
     self.curState = self.states[nextState]
     self.curState:OnEnter()
+    self:RunMachine()
+end
+
+function Machine:RunMachine()
+    while self.curState:NextState() ~= BaseState.StateStage.NoneStage do
+        self:SwitchState(self.curState:NextState())
+    end
+end
+
+function Machine:OnSelectOpUnit(uid)
+    self.curOpUnit = curSession.field:GetUnitByUid(uid)
 end
 
 return Machine

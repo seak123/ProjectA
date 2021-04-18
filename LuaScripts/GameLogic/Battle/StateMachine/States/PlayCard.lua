@@ -7,6 +7,14 @@ function PlayCard:ctor(machine)
 end
 
 function PlayCard:OnEnter()
+    local conditionFunc = function(unit)
+        if unit.vo.Camp == curSession.stateMachine.curActCamp then
+            return true
+        end
+        return false
+    end
+    local opUnit = curSession.field:GetUnit(conditionFunc)
+    EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, opUnit.uid)
 end
 
 function PlayCard:OnLeave()

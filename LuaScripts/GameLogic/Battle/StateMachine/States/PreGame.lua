@@ -8,7 +8,7 @@ function PreGame:ctor(machine)
 end
 
 function PreGame:OnEnter()
-    print("Game init here")
+    Debug.Log("Enter PreGame State")
     local sessVO = curSession.vo
     -- Init map
     curSession.map:InitMap(sessVO.MapVO)
@@ -16,6 +16,9 @@ function PreGame:OnEnter()
     for i = 0, sessVO.Units.Count - 1 do
         curSession.field:CreateUnit(sessVO.Units[i])
     end
+
+    -- Temp auto confirm
+    self.nextState = Base.StateStage.RoundBegin
 end
 
 function PreGame:OnLeave()

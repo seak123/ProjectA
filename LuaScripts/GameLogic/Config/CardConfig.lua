@@ -3,7 +3,7 @@ local ActionType = require("GameLogic.Battle.Actions.BaseAction").ActionType
 
 this.Cards = {
     [1] = {
-        Name = "测试",
+        Name = "移动",
         Actions = {
             {
                 ActionType = ActionType.Move,
