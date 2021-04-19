@@ -1,8 +1,9 @@
 local CardEntity = class("CardEntity")
+local CardConfig = require("GameLogic.Config.CardConfig")
 
 function CardEntity:ctor(id)
-    --self.cardId = cardVO.Id
     self.uid = 0
+    self.config = CardConfig.Cards[id]
 end
 
 return CardEntity

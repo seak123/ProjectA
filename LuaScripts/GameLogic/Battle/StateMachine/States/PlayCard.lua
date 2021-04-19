@@ -20,7 +20,7 @@ end
 function PlayCard:OnLeave()
 end
 
-function PlayCard:InputOrder(orderVO)
+function PlayCard:InputOrder(order)
 end
 
 function PlayCard:NextState()
