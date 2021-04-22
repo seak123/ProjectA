@@ -1,4 +1,5 @@
 local BaseAction = class("BaseAction")
+
 BaseAction.ActionType = {
     Move = 1,
 }

@@ -1,4 +1,4 @@
-local UnitParam = {}
+local UnitParam = class("UnitParam")
 
 -- Define
 UnitParam.Type = {
@@ -7,16 +7,23 @@ UnitParam.Type = {
     Enemy = 3
 }
 
--- Param
-UnitParam.type = UnitParam.Type.Self
-UnitParam.count = 1
+function UnitParam:ctor()
+    -- Param
+    UnitParam.type = UnitParam.Type.Self
+    UnitParam.count = 1
+end
 
 -- Interface
-function UnitParam.FetchParam(paramTable)
-    if #paramTable.Units > 0 then
-        local path = paramTable.Units[1]
-        table.remove(paramTable.Units, 1)
-        return true, path
+function UnitParam:FetchParam(InputTable)
+    if #InputTable.Units > 0 then
+        local result = {}
+        for i = 1, self.count do
+            local unit = InputTable.Units[1]
+            table.insert(result, unit)
+            table.remove(InputTable.Units, 1)
+        end
+
+        return true, result
     end
     return false, nil
 end
