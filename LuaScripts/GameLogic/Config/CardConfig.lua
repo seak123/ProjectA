@@ -8,9 +8,10 @@ this.Cards = {
         Actions = {
             {
                 ActionType = ActionType.Move,
-                Params = {
-                    Friends = 1,
-                    FreeGrid = 1,
+                ActionParams = {
+                    Type = Move.MoveType.Walk,
+                    Target = Move.TargetType.Self,
+                    Distance = 3
                 }
             },
             {}
