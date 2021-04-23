@@ -1,5 +1,7 @@
 local Base = require("GameLogic.Battle.StateMachine.States.BaseState")
 local PlayCard = class("PlayCard", Base)
+local Order = require("GameLogic.Battle.Trace.InputOrder")
+local BattleLib = CS.BattleLuaLibrary
 
 function PlayCard:ctor(machine)
     self.machine = machine
@@ -15,16 +17,44 @@ function PlayCard:OnEnter()
     end
     local opUnit = curSession.field:GetUnit(conditionFunc)
     EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, opUnit.uid)
+    EventManager:On(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
 end
 
 function PlayCard:OnLeave()
 end
 
 function PlayCard:InputOrder(order)
+    if order.type == Order.Type.Play then
+        local actions = self.selectCard.config.actions
+        for i = 1, #actions do
+            local action = require(actions[i].actionType).new(actions[i].actionParams)
+            action:Play(order.inputTable)
+        end
+        curSession.stateMachine.passCounter = 0
+    elseif order.type == Order.Type.Pass then
+        curSession.stateMachine.passCounter = curSession.stateMachine.passCounter + 1
+    end
+    if curSession.stateMachine:SwitchActCamp() then
+        self.nextState = Base.StateStage.RoundEnd
+    else
+        self.nextState = Base.StateStage.PlayCard
+    end
 end
 
 function PlayCard:NextState()
     return self.nextState
+end
+
+function PlayCard:OnSelectCard(uid)
+    local card = curSession.stateMachine.curOpUnit:GetHandCard(uid)
+    self.selectCard = card
+    local inputTable = {}
+    local actions = card.config.actions
+    for i = 1, #actions do
+        local action = require(actions[i].actionType).new(actions[i].actionParams)
+        table.insert(inputTable, action.paramTable)
+    end
+    BattleLib.OnOperateCardNotify(#inputTable, inputTable)
 end
 
 return PlayCard

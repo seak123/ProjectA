@@ -31,6 +31,15 @@ function Unit:DrawACard()
     end
 end
 
+function Unit:GetHandCard(uid)
+    for i = 1, #self.handCards do
+        if self.handCards[i].uid == uid then
+            return self.handCards[i]
+        end
+    end
+    return nil
+end
+
 function Unit:OnRoundBegin()
     for i = 1, self.vo.RoundDrawNum do
         self:DrawACard()

@@ -17,12 +17,15 @@ function Machine:ctor()
     self.curState = nil
     self.curActCamp = 1 -- 行动方
     self.curOpUnit = nil -- 操作单位
+    self.passCounter = 0 -- 空过数
+    self.skipActSwitch = false
 
     EventManager:On(EventConst.ON_SELECT_OP_UNIT, self.OnSelectOpUnit, self)
+    EventManager:On(EventConst.ON_INPUT_ORDER, self.InputOrder, self)
 end
 
-function Machine:InputPlayerOrder(orderVO)
-    self.curState:InputOrder(orderVO)
+function Machine:InputPlayerOrder(order)
+    self.curState:InputOrder(order)
     self:RunMachine()
 end
 
@@ -38,6 +41,20 @@ end
 function Machine:RunMachine()
     while self.curState:NextState() ~= BaseState.StateStage.NoneStage do
         self:SwitchState(self.curState:NextState())
+    end
+end
+
+function Machine:SwitchActCamp()
+    if self.skipActSwitch then
+        self.skipActSwitch = false
+    else
+        self.curActCamp = 3 - self.curActCamp
+    end
+    if self.passCounter == 2 then
+        self.passCounter = 0
+        return true
+    else
+        return false
     end
 end
 
