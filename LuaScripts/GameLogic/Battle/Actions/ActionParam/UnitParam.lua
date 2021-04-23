@@ -9,8 +9,8 @@ UnitParam.Type = {
 
 function UnitParam:ctor()
     -- Param
-    UnitParam.type = UnitParam.Type.Self
-    UnitParam.count = 1
+    self.type = UnitParam.Type.Self
+    self.count = 1
 end
 
 -- Interface

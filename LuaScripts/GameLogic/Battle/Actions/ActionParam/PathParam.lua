@@ -1,18 +1,17 @@
-local PathParam = {}
+local PathParam = class("PathParam")
 
--- Define
 PathParam.Type = {
-    Self = 1,
-    Friend = 2,
-    Enemy = 3
+    WalkPath = 1,
 }
 
--- Param
-PathParam.type = PathParam.Type.Self
-PathParam.count = 1
+function PathParam:ctor()
+    -- Param
+    self.type = PathParam.Type.WalkPath
+    self.count = 1
+end
 
 -- Interface
-function PathParam.FetchParam(paramTable)
+function PathParam:FetchParam(paramTable)
     if #paramTable.Paths > 0 then
         local path = paramTable.Paths[1]
         table.remove(paramTable.Paths, 1)

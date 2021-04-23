@@ -16,8 +16,9 @@ function CardItem:ctor(obj)
     self.super.ctor(self, obj, setting)
 end
 
-function CardItem:SetData(data)
-    self.CardName.text = data.Name
+function CardItem:SetData(cardEntity)
+    self.uid = cardEntity.uid
+    self.CardName.text = cardEntity.config.name
 end
 
 return CardItem
