@@ -20,6 +20,11 @@ function Move:ctor()
 end
 
 function Move:Play()
+    local target, path = nil
+    if self.type == Move.MoveType.Walk then
+        MoveAct.Execute(target, path)
+    elseif self.type == Move.MoveType.Blink then
+    end
 end
 
 return Move

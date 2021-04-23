@@ -43,9 +43,10 @@ function BattleMainPanel:ctor(obj)
     self.opUnit = nil
 
     self.CardView.getFunc = function(index)
-        if self.opUnit ~= nil then
+        if self.opUnit ~= nil and index <= #self.opUnit.handCards then
             return self.opUnit.handCards[index].config
         end
+        return nil
     end
     self.CardView:Init("UI/Prefabs/Battle/UI_CardItem", 150)
 
