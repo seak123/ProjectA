@@ -9,7 +9,13 @@ function LuaBehaviourUtil.FindGameObject(root_go, element_path, lb, necessary)
         local go = go_util.FindGameObjectStrictly(root_go, element_path)
         if go == nil then
             if necessary == nil or necessary == true then
-                Debug.Error("[" .. lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, Can't Find GameObject " .. element_path .. " in Strictly mode, fix it")
+                Debug.Error(
+                    "[" ..
+                        lb.__cname ..
+                            "]" ..
+                                "LuaBehaviour Setting seems incorrect, Can't Find GameObject " ..
+                                    element_path .. " in Strictly mode, fix it"
+                )
             end
             go = go_util.FindGameObject(root_go, element_path)
         end
@@ -22,7 +28,10 @@ function LuaBehaviourUtil.BindElement(lb, lb_go, element, field_name, is_array, 
     local element_go = LuaBehaviourUtil.FindGameObject(lb_go, element_path, lb, element.Necessary)
     if element_go == nil then
         if element.Necessary == nil or element.Necessary == true then
-            Debug.Error("[" .. lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, Can't Find GameObject " .. element_path)
+            Debug.Error(
+                "[" ..
+                    lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, Can't Find GameObject " .. element_path
+            )
         end
 
         return
@@ -32,7 +41,12 @@ function LuaBehaviourUtil.BindElement(lb, lb_go, element, field_name, is_array, 
     if element.Type then
         obj = element_go:GetComponent(typeof(element.Type))
         if not obj then
-            Debug.Error("[" .. lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, " .. tostring(field_name) .. " has no specific type")
+            Debug.Error(
+                "[" ..
+                    lb.__cname ..
+                        "]" ..
+                            "LuaBehaviour Setting seems incorrect, " .. tostring(field_name) .. " has no specific type"
+            )
             return
         end
     elseif element.Script then
@@ -52,13 +66,19 @@ function LuaBehaviourUtil.BindElement(lb, lb_go, element, field_name, is_array, 
     if element.Handler then
         local field = obj
         if not field then
-            Debug.Error("[" .. lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, Can't Find Field " .. tostring(field_name))
+            Debug.Error(
+                "[" ..
+                    lb.__cname ..
+                        "]" .. "LuaBehaviour Setting seems incorrect, Can't Find Field " .. tostring(field_name)
+            )
             return
         end
 
         for msg, rsp in pairs(element.Handler) do
             if not field[msg] then
-                Debug.Error("[" .. lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, Can't Find Function " .. msg)
+                Debug.Error(
+                    "[" .. lb.__cname .. "]" .. "LuaBehaviour Setting seems incorrect, Can't Find Function " .. msg
+                )
             else
                 local rsp_type = type(rsp)
                 if rsp_type == "string" then
@@ -101,7 +121,8 @@ function LuaBehaviourUtil.BindElements(lb)
         if element.Count then
             lb[field_name] = {}
             for i = 1, element.Count do
-                local elementName = element.NamePostfix and (element.Name .. i .. tostring(element.NamePostfix)) or (element.Name .. i)
+                local elementName =
+                    element.NamePostfix and (element.Name .. i .. tostring(element.NamePostfix)) or (element.Name .. i)
                 LuaBehaviourUtil.BindElement(lb, lb_go, element, field_name, true, elementName)
             end
         else
@@ -117,10 +138,10 @@ function LuaBehaviourUtil.BindEvents(lb)
         return
     end
 
-    for i = 1, #events do
-        local info = events[i]
-        local func = lb[info.Handler]
-        EventManager:On(info.Name, func, lb)
+    for k, v in pairs(events) do
+        local name = k
+        local func = lb[v]
+        EventManager:On(k, func, lb)
         -- if func ~= nil then
         --     table.insert(lb._events, {name = info.Name, handler = EventManager:On(info.Name, func, lb)})
         -- end

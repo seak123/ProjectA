@@ -61,19 +61,6 @@ function EventManager:Off(eventName, func, obj)
     end
 end
 
-function EventManager:RegisterCS(eventName, func)
-    local hfunc = function(table)
-        func(table)
-    end
-    local handler = Handle:new(hfunc)
-    self:AddListener(eventName, handler)
-    return handler
-end
-
-function EventManager:UnRegisterCS(eventName, handler)
-    self:RemoveListener(eventName, handler)
-end
-
 function EventManager:Emit(eventName, ...)
     if eventName == nil then
         return Debug.Error("[EventManager] try to emit event, but eventName is nil")
@@ -81,6 +68,11 @@ function EventManager:Emit(eventName, ...)
     if self._eventMap[eventName] then
         self._eventMap[eventName]:Fire(...)
     end
+    local args = {...}
+    local argTable = {}
+    argTable.count = #args
+    argTable.args = args
+    CS.EventManager.LuaEmit(eventName,argTable)
 end
 
 return EventManager

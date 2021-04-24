@@ -10,7 +10,7 @@ Move.Type = {
 }
 
 -- default value
-Move.type = Move.MoveType.Walk
+Move.type = Move.Type.Walk
 Move.target = Base.TargetType.Self
 Move.distance = 1
 

@@ -85,7 +85,7 @@ end
 function CommonListView:ClearItems()
     for i = 1, #self.items do
         if self.items[i] ~= nil then
-            CS.WindowsUtil.RemoveWindow(self.items[i])
+            CS.UILibrary.RemoveUIFrame(self.items[i])
         end
     end
     self.items = {}

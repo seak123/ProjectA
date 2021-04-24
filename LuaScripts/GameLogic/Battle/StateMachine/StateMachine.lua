@@ -24,7 +24,7 @@ function Machine:ctor()
     EventManager:On(EventConst.ON_INPUT_ORDER, self.InputOrder, self)
 end
 
-function Machine:InputPlayerOrder(order)
+function Machine:InputOrder(order)
     self.curState:InputOrder(order)
     self:RunMachine()
 end

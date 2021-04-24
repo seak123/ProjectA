@@ -47,14 +47,16 @@ end
 
 function PlayCard:OnSelectCard(uid)
     local card = curSession.stateMachine.curOpUnit:GetHandCard(uid)
-    self.selectCard = card
-    local inputTable = {}
-    local actions = card.config.actions
-    for i = 1, #actions do
-        local action = require(actions[i].actionType).new(actions[i].actionParams)
-        table.insert(inputTable, action.paramTable)
+    if card then
+        self.selectCard = card
+        local inputTable = {}
+        local actions = card.config.actions
+        for i = 1, #actions do
+            local action = require(actions[i].actionType).new(actions[i].actionParams)
+            table.insert(inputTable, action.paramTable)
+        end
+        EventManager:Emit(EventConst.REQ_ORDER_INPUT,#inputTable, inputTable)
     end
-    BattleLib.OnOperateCardNotify(#inputTable, inputTable)
 end
 
 return PlayCard

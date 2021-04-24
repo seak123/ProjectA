@@ -1,7 +1,7 @@
 local this = {}
 local ActionType = require("GameLogic.Battle.Actions.BaseAction").ActionType
 local BaseAct = require("GameLogic.Battle.Actions.BaseAction")
-local MoveAct = require("GameLogic.Battle.Actions.Move")
+local MoveAct = require("GameLogic.Battle.Actions.MoveAction")
 
 this.Cards = {
     [1] = {
@@ -10,12 +10,11 @@ this.Cards = {
             {
                 actionType = ActionType.Move,
                 actionParams = {
-                    type = MoveAct.MoveType.Walk,
+                    type = MoveAct.Type.Walk,
                     target = BaseAct.TargetType.Self,
                     distance = 3
                 }
             },
-            {}
         }
     }
 }

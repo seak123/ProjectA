@@ -43,10 +43,7 @@ local setting =
     -- 自动注册的Event消息
     Events =
     {
-    	{
-            Name: "OnEventName1",
-            Handler: "OnEventExecute",
-        }
+        "OnEventName1" = "OnEventExecute",
 	},
 
     -- 自动注册的Timer

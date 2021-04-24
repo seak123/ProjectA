@@ -34,23 +34,26 @@ local setting = {
     },
     Events = {
         [EventConst.ON_BATTLE_ROUND_BEGIN] = "OnRoundBegin",
-        [EventConst.ON_SELECT_OP_UNIT] = "OnSelectUnit"
+        [EventConst.ON_SELECT_OP_UNIT] = "OnSelectUnit",
+        [EventConst.ON_SELECT_CARD] = "OnSelectCard"
     }
 }
 
 function BattleMainPanel:ctor(obj)
     self.super.ctor(self, obj, setting)
     self.opUnit = nil
+    self.opCard = nil
 
     self.CardView.getFunc = function(index)
         if self.opUnit ~= nil and index <= #self.opUnit.handCards then
-            return self.opUnit.handCards[index].config
+            return self.opUnit.handCards[index]
         end
         return nil
     end
     self.CardView:Init("UI/Prefabs/Battle/UI_CardItem", 150)
 
     self:OnSelectUnit(curSession.stateMachine.curOpUnit.uid)
+    self:RefreshCardView()
 end
 
 function BattleMainPanel:OnAwake()
@@ -64,7 +67,7 @@ function BattleMainPanel:OnReqPass()
 end
 
 function BattleMainPanel:OnReqCancel()
-    print("req cancel")
+    EventManager:Emit(EventConst.ON_SELECT_CARD, 0)
 end
 
 function BattleMainPanel:OnRoundBegin()
@@ -74,14 +77,19 @@ end
 
 function BattleMainPanel:OnSelectUnit(uid)
     self.opUnit = curSession.field:GetUnitByUid(uid)
-    if self.opUnit ~= nil then
-        self.UnitName.text = self.opUnit.vo.Name
-        self:RefreshCardView()
-    end
+    self:RefreshCardView()
+    self.CardView:RefreshView()
+end
+
+function BattleMainPanel:OnSelectCard(uid)
+    self.opCard = curSession.stateMachine.curOpUnit:GetHandCard(uid)
+    self:RefreshCardView()
 end
 
 function BattleMainPanel:RefreshCardView()
-    self.CardView:RefreshView()
+    self.UnitName.text = self.opUnit and self.opUnit.vo.Name or ""
+    self.PassBtn.gameObject:SetActive(self.opCard == nil)
+    self.CancelBtn.gameObject:SetActive(self.opCard ~= nil)
 end
 
 return BattleMainPanel
