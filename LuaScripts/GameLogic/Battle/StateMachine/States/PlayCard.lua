@@ -55,7 +55,7 @@ function PlayCard:OnSelectCard(uid)
             local action = require(actions[i].actionType).new(actions[i].actionParams)
             table.insert(inputTable, action.paramTable)
         end
-        EventManager:Emit(EventConst.REQ_ORDER_INPUT,#inputTable, inputTable)
+        EventManager:Emit(EventConst.REQ_ORDER_INPUT, inputTable)
     end
 end
 

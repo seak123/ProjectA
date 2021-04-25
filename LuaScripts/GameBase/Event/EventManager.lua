@@ -70,7 +70,7 @@ function EventManager:Emit(eventName, ...)
     end
     local args = {...}
     local argTable = {}
-    argTable.count = #args
+    argTable.argCount = #args
     argTable.args = args
     CS.EventManager.LuaEmit(eventName,argTable)
 end
