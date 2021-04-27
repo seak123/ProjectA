@@ -11,6 +11,8 @@ function Field:CreateUnit(unitVO)
     self.unitCounter = self.unitCounter + 1
     unit.uid = self.unitCounter
     self.units[unit.uid] = unit
+
+    EventManager:Emit(EventConst.ON_CREATE_UNIT, unit.uid, unitVO)
 end
 
 ---------- Utils start ---------------

@@ -52,7 +52,6 @@ function BattleMainPanel:ctor(obj)
     end
     self.CardView:Init("UI/Prefabs/Battle/UI_CardItem", 150)
 
-    self:OnSelectUnit(curSession.stateMachine.curOpUnit.uid)
     self:RefreshCardView()
 end
 
