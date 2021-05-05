@@ -1,4 +1,5 @@
-local PathParam = class("PathParam")
+local Base = require("GameLogic.Battle.Actions.ActionParam.BaseParam")
+local PathParam = class("PathParam",Base)
 
 PathParam.Type = {
     WalkPath = 1,
@@ -6,6 +7,7 @@ PathParam.Type = {
 
 function PathParam:ctor()
     -- Param
+    self.taskType = Base.TaskType.Path
     self.type = PathParam.Type.WalkPath
     self.count = 1
 end

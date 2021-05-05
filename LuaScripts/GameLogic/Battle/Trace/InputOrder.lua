@@ -1,8 +1,8 @@
 local Order = class("InputOrder")
 
 Order.Type = {
-    Play = 1,
-    Pass = 2
+    Play = 0,
+    Pass = 1
 }
 
 function Order:ctor(obj)

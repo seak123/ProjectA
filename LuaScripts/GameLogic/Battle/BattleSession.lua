@@ -3,7 +3,6 @@ local StateMachine = require("GameLogic.Battle.StateMachine.StateMachine")
 local BaseState = require("GameLogic.Battle.StateMachine.States.BaseState")
 local BattleField = require("GameLogic.Battle.BattleField")
 local BattleMap = require("GameLogic.Battle.Map.BattleMap")
-local BattleLib = CS.BattleLuaLibrary
 
 function BattleSession:ctor(sessVO)
     self.vo = sessVO
@@ -12,13 +11,26 @@ function BattleSession:ctor(sessVO)
     self.field = BattleField.new()
 end
 
-function BattleSession:InputOrder(order)
-    self.stateMachine:InputPlayerOrder(order)
-end
-
 function BattleSession.StartBattle(sessVO)
     _G.curSession = BattleSession.new(sessVO)
     _G.curSession.stateMachine:SwitchState(BaseState.StateStage.PreGame)
+end
+
+-------------- csharp util function -------------------
+
+function BattleSession.GetUnitProperty(uid, name)
+    local unit = _G.curSession.field:GetUnitByUid(uid)
+    if unit ~= nil then
+        return unit.property:GetValue(name)
+    end
+end
+
+function BattleSession.IsGridMovable(uid, vector)
+    return _G.curSession.map:IsGridMovable(uid, vector)
+end
+
+function BattleSession.GetPathToGoal(uid, vector)
+    return _G.curSession.map:GetPathToGoal(uid, vector)
 end
 
 return BattleSession

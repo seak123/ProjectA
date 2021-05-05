@@ -1,4 +1,5 @@
-local UnitParam = class("UnitParam")
+local Base = require("GameLogic.Battle.Actions.ActionParam.BaseParam")
+local UnitParam = class("UnitParam",Base)
 
 -- Define
 UnitParam.Type = {
@@ -9,6 +10,7 @@ UnitParam.Type = {
 
 function UnitParam:ctor()
     -- Param
+    self.taskType = Base.TaskType.Target
     self.type = UnitParam.Type.Self
     self.count = 1
 end

@@ -35,7 +35,8 @@ local setting = {
     Events = {
         [EventConst.ON_BATTLE_ROUND_BEGIN] = "OnRoundBegin",
         [EventConst.ON_SELECT_OP_UNIT] = "OnSelectUnit",
-        [EventConst.ON_SELECT_CARD] = "OnSelectCard"
+        [EventConst.ON_SELECT_CARD] = "OnSelectCard",
+        [EventConst.ON_CANCEL_PLAYCARD] = "OnCancelCard"
     }
 }
 
@@ -66,7 +67,7 @@ function BattleMainPanel:OnReqPass()
 end
 
 function BattleMainPanel:OnReqCancel()
-    EventManager:Emit(EventConst.ON_SELECT_CARD, 0)
+    EventManager:Emit(EventConst.ON_CANCEL_PLAYCARD)
 end
 
 function BattleMainPanel:OnRoundBegin()
@@ -82,6 +83,11 @@ end
 
 function BattleMainPanel:OnSelectCard(uid)
     self.opCard = curSession.stateMachine.curOpUnit:GetHandCard(uid)
+    self:RefreshCardView()
+end
+
+function BattleMainPanel:OnCancelCard()
+    self.opCard  = nil
     self:RefreshCardView()
 end
 

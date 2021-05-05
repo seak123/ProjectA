@@ -1,6 +1,13 @@
 local Map = class("BattleMap")
 local Grid = require("GameLogic.Battle.Map.MapGrid")
 
+Map.Direction = {
+    North = 0,
+    West = 1,
+    Sourth = 2,
+    East = 3
+}
+
 function Map:ctor()
     self.grids = {}
     self.mapLength = 0 -- Z axis
@@ -39,18 +46,124 @@ end
 -------------------------------
 
 -------- utils start ----------
+function Map:IsCoordValid(vector)
+    return vector.x >= 0 and vector.x < self.mapWidth and vector.y >= 0 and vector.y < self.mapLength
+end
 function Map:Coord2Index(vector)
+    if not self:IsCoordValid(vector) then
+        return -1
+    end
     return vector.y * self.mapWidth + vector.x
 end
 function Map.GetAdjacentPos(pos, direction)
-    if direction == CS.BattleDirection.North then
+    if direction == Map.Direction.North then
         return {x = pos.x, y = pos.y + 1}
-    elseif direction == CS.BattleDirection.East then
+    elseif direction == Map.Direction.East then
         return {x = pos.x + 1, y = pos.y}
-    elseif direction == CS.BattleDirection.West then
+    elseif direction == Map.Direction.West then
         return {x = pos.x - 1, y = pos.y}
     else
         return {x = pos.x, y = pos.y - 1}
+    end
+end
+function Map:IsGridMovable(uid, vector)
+    local index = self:Coord2Index(vector)
+    local grid = self.grids[index]
+    if grid ~= nil then
+        return grid:IsWalkable()
+    end
+    return false
+end
+function Map:GetPathToGoal(uid, vector)
+    local unit = curSession.field:GetUnitByUid(uid)
+    return self:AStar(uid, unit.transform.position, vector)
+end
+-- a* find a path of source->target, return the a point list
+function Map:AStar(uid, source, target)
+    local distCal = function(pos)
+        return math.abs(pos.x - target.x) + math.abs(pos.y - target.y)
+    end
+    local queue = {
+        {
+            x = source.x,
+            y = source.y,
+            cost = 0,
+            dist = distCal(source),
+            weight = distCal(source),
+            parent = nil
+        }
+    }
+    local closedMap = {}
+    local matrix = {
+        {x = 0, y = 1, cost = 1},
+        {x = 0, y = -1, cost = 1},
+        {x = -1, y = 0, cost = 1},
+        {x = 1, y = 0, cost = 1}
+    }
+    local resultP
+    while #queue > 0 do
+        local curP = queue[1]
+        local sx = curP.x
+        local sz = curP.z
+        -- if curP is near target-point then return this result
+        if curP.x == target.x and curP.y == target.y then
+            resultP = curP
+            break
+        end
+        -- mark current point in closedMap
+        closedMap[self:Coord2Index(curP)] = true
+        for i = 1, #matrix do
+            local newP = {
+                x = curP.x + matrix[i].x,
+                y = curP.y + matrix[i].y
+            }
+            if self:IsCoordValid(newP) and closedMap[self:Coord2Index(newP)] ~= true and self:IsGridMovable(uid, newP) then
+                -- this point is a new point
+                local sameP =
+                    table.find_if(
+                    queue,
+                    function(p)
+                        return p.x == newP.x and p.y == newP.y
+                    end
+                )
+                if sameP == nil then
+                    newP.cost = curP.cost + matrix[i].cost
+                    newP.dist = distCal(newP)
+                    newP.weight = newP.cost + distCal(newP)
+                    newP.parent = curP
+                    table.insert(queue, newP)
+                else
+                    if sameP.weight > curP.cost + matrix[i].cost + distCal(newP) then
+                        sameP.cost = curP.cost + matrix[i].cost
+                        sameP.dist = distCal(newP)
+                        sameP.weight = sameP.cost + sameP.dist
+                        sameP.parent = curP
+                    end
+                end
+            end
+        end
+        table.remove(queue, 1)
+        table.sort(
+            queue,
+            function(a, b)
+                return a.weight < b.weight
+            end
+        )
+    end
+
+    if resultP == nil then
+        local sourceStr = "[" .. tostring(source.x) .. "," .. tostring(source.y) .. "]"
+        local targetStr = "[" .. tostring(target.x) .. "," .. tostring(target.y) .. "]"
+        Debug.Warn("cannot find a path from " .. sourceStr .. " to " .. targetStr)
+        return {}
+    else
+        local pathList = {}
+        table.insert(pathList, {x = resultP.x, y = resultP.y})
+        while resultP.parent ~= nil do
+            resultP = resultP.parent
+            table.insert(pathList, 1, {x = resultP.x, y = resultP.y})
+        end
+        return pathList
     end
 end
 -------- utils end ------------
