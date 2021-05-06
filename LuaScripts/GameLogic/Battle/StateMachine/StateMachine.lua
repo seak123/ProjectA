@@ -5,6 +5,7 @@ local RoundBegin = require("GameLogic.Battle.StateMachine.States.RoundBegin")
 local PlayCard = require("GameLogic.Battle.StateMachine.States.PlayCard")
 local RoundEnd = require("GameLogic.Battle.StateMachine.States.RoundEnd")
 local GameEnd = require("GameLogic.Battle.StateMachine.States.GameEnd")
+local InputOrder = require("LuaScripts.GameLogic.Battle.Trace.InputOrder")
 
 function Machine:ctor()
     self.states = {}
@@ -21,7 +22,13 @@ function Machine:ctor()
     self.skipActSwitch = false
 
     EventManager:On(EventConst.ON_SELECT_OP_UNIT, self.OnSelectOpUnit, self)
-    EventManager:On(EventConst.ON_INPUT_ORDER, self.InputOrder, self)
+    EventManager:On(EventConst.ON_INPUT_CS_ORDER, self.InputCSOrder, self)
+end
+
+function Machine:InputCSOrder(csOrder)
+    local order = InputOrder.new()
+    order:ParseFromCS(csOrder)
+    self:InputOrder(order)
 end
 
 function Machine:InputOrder(order)

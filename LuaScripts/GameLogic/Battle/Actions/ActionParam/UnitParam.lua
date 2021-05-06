@@ -17,12 +17,12 @@ end
 
 -- Interface
 function UnitParam:FetchParam(InputTable)
-    if #InputTable.Units > 0 then
+    if #InputTable.units > 0 then
         local result = {}
         for i = 1, self.count do
-            local unit = InputTable.Units[1]
+            local unit = InputTable.units[1]
             table.insert(result, unit)
-            table.remove(InputTable.Units, 1)
+            table.remove(InputTable.units, 1)
         end
 
         return true, result

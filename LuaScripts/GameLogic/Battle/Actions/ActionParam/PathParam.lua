@@ -1,8 +1,8 @@
 local Base = require("GameLogic.Battle.Actions.ActionParam.BaseParam")
-local PathParam = class("PathParam",Base)
+local PathParam = class("PathParam", Base)
 
 PathParam.Type = {
-    WalkPath = 1,
+    WalkPath = 1
 }
 
 function PathParam:ctor()
@@ -14,9 +14,9 @@ end
 
 -- Interface
 function PathParam:FetchParam(paramTable)
-    if #paramTable.Paths > 0 then
-        local path = paramTable.Paths[1]
-        table.remove(paramTable.Paths, 1)
+    if #paramTable.paths > 0 then
+        local path = paramTable.paths[1]
+        table.remove(paramTable.paths, 1)
         return true, path
     end
     return false, nil

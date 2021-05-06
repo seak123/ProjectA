@@ -24,8 +24,9 @@ function Map:InitMap(mapVO)
     end
 end
 -------- game logic -----------
-function Map:MoveUnit(unit, direction)
-    local goal = self.GetAdjacentPos(unit.transform.position, direction)
+function Map:MoveUnit(unit, point)
+    local direction = self.GetDirection(unit.transform.position, point)
+    local goal = point
     local index = self:Coord2Index(goal)
     local curGrid = self.grids[self:Coord2Index(unit.transform.position)]
     local grid = self.grids[index]
@@ -54,6 +55,22 @@ function Map:Coord2Index(vector)
         return -1
     end
     return vector.y * self.mapWidth + vector.x
+end
+function Map.GetDirection(start, goal)
+    local delta = goal.x - start.x
+    if delta == 0 then
+        delta = 0.01
+    end
+    local direction = nil
+    local isVague = false
+    local k = math.abs((goal.y - start.y) / delta)
+    if k >= 1 then
+        direction = goal.y > start.y and Map.Direction.North or Map.Direction.Sourth
+    else
+        direction = goal.x > start.x and Map.Direction.East or Map.Direction.West
+    end
+    isVague = math.abs(goal.y - start.y) == math.abs(goal.x - start.x)
+    return direction, isVague
 end
 function Map.GetAdjacentPos(pos, direction)
     if direction == Map.Direction.North then
