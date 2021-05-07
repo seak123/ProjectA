@@ -38,6 +38,7 @@ function PlayCard:InputOrder(order)
     elseif order.type == Order.Type.Pass then
         curSession.stateMachine.passCounter = curSession.stateMachine.passCounter + 1
     end
+    curSession.performer:Perform()
     if curSession.stateMachine:SwitchActCamp() then
         self.nextState = Base.StateStage.RoundEnd
     else
