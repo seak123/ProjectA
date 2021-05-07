@@ -25,6 +25,13 @@ function BattleSession.GetUnitProperty(uid, name)
     end
 end
 
+function BattleSession.GetUnitCoord(uid)
+    local unit = _G.curSession.field:GetUnitByUid(uid)
+    if unit ~= nil then
+        return unit.transform.position
+    end
+end
+
 function BattleSession.IsGridMovable(uid, vector)
     return _G.curSession.map:IsGridMovable(uid, vector)
 end

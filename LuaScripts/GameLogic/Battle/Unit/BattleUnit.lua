@@ -31,6 +31,20 @@ function Unit:DrawACard()
     end
 end
 
+function Unit:PlayACard(uid)
+    local card = nil
+    for i = 1, #self.handCards do
+        if self.handCards[i].uid == uid then
+            card = self.handCards[i]
+            table.remove(self.handCards, i)
+            break
+        end
+    end
+    if card then
+        table.insert(self.discardPile, card)
+    end
+end
+
 function Unit:GetHandCard(uid)
     for i = 1, #self.handCards do
         if self.handCards[i].uid == uid then

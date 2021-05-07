@@ -24,6 +24,10 @@ function Map:InitMap(mapVO)
     end
 end
 -------- game logic -----------
+function Map:CreateUnit(unit)
+    local curGrid = self.grids[self:Coord2Index(unit.transform.position)]
+    curGrid.standingUnit = unit
+end
 function Map:MoveUnit(unit, point)
     local direction = self.GetDirection(unit.transform.position, point)
     local goal = point

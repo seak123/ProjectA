@@ -12,6 +12,7 @@ function Field:CreateUnit(unitVO)
     unit.uid = self.unitCounter
     self.units[unit.uid] = unit
 
+    curSession.map:CreateUnit(unit)
     EventManager:Emit(EventConst.ON_CREATE_UNIT, unit.uid, unitVO)
 end
 

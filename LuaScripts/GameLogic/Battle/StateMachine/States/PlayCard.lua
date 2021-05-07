@@ -17,22 +17,23 @@ function PlayCard:OnEnter()
     end
     local opUnit = curSession.field:GetUnit(conditionFunc)
     self.nextState = Base.StateStage.NoneStage
-    
+
     EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, opUnit.uid)
     EventManager:On(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
 end
 
 function PlayCard:OnLeave()
-    
 end
 
 function PlayCard:InputOrder(order)
     if order.type == Order.Type.Play then
         local actions = self.selectCard.config.actions
+        -- TODO: check whether input is valid here
         for i = 1, #actions do
             local action = require(actions[i].actionType).new(actions[i].actionParams)
             action:Play(order.paramTable)
         end
+        curSession.stateMachine.curOpUnit:PlayACard(self.selectCard.uid)
         curSession.stateMachine.passCounter = 0
     elseif order.type == Order.Type.Pass then
         curSession.stateMachine.passCounter = curSession.stateMachine.passCounter + 1

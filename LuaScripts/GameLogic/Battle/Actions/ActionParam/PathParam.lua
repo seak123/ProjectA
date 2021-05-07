@@ -17,6 +17,10 @@ function PathParam:FetchParam(paramTable)
     if #paramTable.paths > 0 then
         local path = paramTable.paths[1]
         table.remove(paramTable.paths, 1)
+        if self.type == PathParam.Type.WalkPath then
+            -- remove start point
+            table.remove(path, 1)
+        end
         return path, true
     end
     return nil, false
