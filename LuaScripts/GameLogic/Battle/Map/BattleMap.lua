@@ -38,7 +38,7 @@ function Map:MoveUnit(unit, point)
             grid.standingUnit = unit
             unit:PostMove()
         else
-            Debug.Error("Grid cannot move on")
+            Debug.Error("Grid cannot move on, pos:" .. "[" .. tostring(goal.x) .. "," .. tostring(goal.y) .. "]")
         end
     else
         Debug.Error("Move unit failed")

@@ -21,7 +21,7 @@ end
 
 function Move:Play(inputTable)
     if self.vo.type == Move.Type.Walk then
-        local target = self.paramTable[1]:FetchParam(inputTable)
+        local target = self.paramTable[1]:FetchParam(inputTable)[1]
         local path = self.paramTable[2]:FetchParam(inputTable)
         MoveRawAct.Execute(target, path)
     end

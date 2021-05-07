@@ -17,9 +17,9 @@ function PathParam:FetchParam(paramTable)
     if #paramTable.paths > 0 then
         local path = paramTable.paths[1]
         table.remove(paramTable.paths, 1)
-        return true, path
+        return path, true
     end
-    return false, nil
+    return nil, false
 end
 
 return PathParam

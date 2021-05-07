@@ -33,4 +33,8 @@ function BattleSession.GetPathToGoal(uid, vector)
     return _G.curSession.map:GetPathToGoal(uid, vector)
 end
 
+function BattleSession.UpdateReadyOrder(isReady, order)
+    EventManager:Emit(EventConst.ON_PLAYCARD_READY_CHANGE, isReady, order)
+end
+
 return BattleSession

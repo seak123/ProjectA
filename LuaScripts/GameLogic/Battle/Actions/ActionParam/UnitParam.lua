@@ -1,5 +1,5 @@
 local Base = require("GameLogic.Battle.Actions.ActionParam.BaseParam")
-local UnitParam = class("UnitParam",Base)
+local UnitParam = class("UnitParam", Base)
 
 -- Define
 UnitParam.Type = {
@@ -25,9 +25,9 @@ function UnitParam:FetchParam(InputTable)
             table.remove(InputTable.units, 1)
         end
 
-        return true, result
+        return result, true
     end
-    return false, nil
+    return nil, false
 end
 
 return UnitParam

@@ -19,7 +19,7 @@ function Order:ParseFromCS(csOrder)
     -- unit params
     self.paramTable.units = {}
     for i = 0, csOrder.units.Count - 1 do
-        table.insert(self.units, csOrder.units[i])
+        table.insert(self.paramTable.units, csOrder.units[i])
     end
     -- path params
     self.paramTable.paths = {}
@@ -27,8 +27,8 @@ function Order:ParseFromCS(csOrder)
         local pointList = csOrder.paths[i]
         local path = {}
         table.insert(self.paramTable.paths, path)
-        for p = 1, pointList.Count - 1 do
-            local point = {x = pointList[i].x, y = pointList[i].y}
+        for p = 0, pointList.Count - 1 do
+            local point = {x = pointList[p].x, y = pointList[p].y}
             table.insert(path, point)
         end
     end

@@ -16,11 +16,14 @@ function PlayCard:OnEnter()
         return false
     end
     local opUnit = curSession.field:GetUnit(conditionFunc)
+    self.nextState = Base.StateStage.NoneStage
+    
     EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, opUnit.uid)
     EventManager:On(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
 end
 
 function PlayCard:OnLeave()
+    
 end
 
 function PlayCard:InputOrder(order)
@@ -28,7 +31,7 @@ function PlayCard:InputOrder(order)
         local actions = self.selectCard.config.actions
         for i = 1, #actions do
             local action = require(actions[i].actionType).new(actions[i].actionParams)
-            action:Play(order.inputTable)
+            action:Play(order.paramTable)
         end
         curSession.stateMachine.passCounter = 0
     elseif order.type == Order.Type.Pass then

@@ -1,6 +1,6 @@
 local LuaBehaviour = require("GameCore.Frame.LuaBehaviour")
 local BattleMainPanel = class("BattleMainPanel", LuaBehaviour)
-local InputOrder = require("LuaScripts.GameLogic.Battle.Trace.InputOrder")
+local InputOrder = require("GameLogic.Battle.Trace.InputOrder")
 
 local BattleOpState = {}
 
@@ -80,8 +80,8 @@ end
 
 function BattleMainPanel:OnConfirm()
     if self.readyOrder ~= nil then
+        EventManager:Emit(EventConst.ON_INPUT_ORDER, self.readyOrder)
         EventManager:Emit(EventConst.ON_CONFIRM_PLAYCARD)
-        EventManager:Emit(EventConst.ON_INPUT_CS_ORDER, self.readyOrder)
     else
         Debug.Error("Temp to confirm play card, but input-param is nil")
     end
@@ -116,11 +116,18 @@ function BattleMainPanel:RefreshCardView()
     self.UnitName.text = self.opUnit and self.opUnit.vo.Name or ""
     self.PassBtn.gameObject:SetActive(self.opCard == nil)
     self.CancelBtn.gameObject:SetActive(self.opCard ~= nil)
+    self.ConfirmBtn.gameObject:SetActive(self.readyOrder ~= nil)
 end
 
-function BattleMainPanel:OnReadyChange(bReady, order)
-    self.ConfirmBtn.gameObject:SetActive(bReady == true)
+function BattleMainPanel:OnReadyChange(bReady, csOrder)
+    local order = nil
+    if bReady then
+        order = InputOrder.new()
+        order:ParseFromCS(csOrder)
+    end
+
     self.readyOrder = order
+    self:RefreshCardView()
 end
 
 return BattleMainPanel
