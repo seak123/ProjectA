@@ -10,7 +10,7 @@ function Performer:PushNode(node)
         self.rootNode = node
         self.curNode = self.rootNode
     else
-        self.curNode:AddFoNode(node)
+        self.curNode:AddFollower(node)
         self.curNode = node
     end
 end
