@@ -1648,6 +1648,7 @@ function table.find_if(table,func)
     return nil
 end
 
+
 function clamp( num,min,max )
     if num <min then
         num = min

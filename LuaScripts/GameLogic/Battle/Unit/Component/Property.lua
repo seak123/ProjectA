@@ -1,13 +1,24 @@
 local Property = class("Property")
 
 Property.PropDef = {
-    Hp = "MaxHp",
-    Energy = "MaxEnergy",
+    Hp = "Hp",
+    Energy = "Energy",
+    MaxHp = "MaxHp",
+    MaxEnergy = "MaxEnergy",
     Speed = "Speed"
+}
+
+Property.PropDesc = {
+    [Property.PropDef.Hp] = "当前血量",
+    [Property.PropDef.Energy] = "能量",
+    [Property.PropDef.MaxHp] = "最大血量",
+    [Property.PropDef.MaxEnergy] = "最大能量",
+    [Property.PropDef.Speed] = "速度"
 }
 
 function Property:ctor(unit)
     self.master = unit
+    self:Init()
 end
 
 function Property:Init()
@@ -16,7 +27,7 @@ function Property:Init()
         self[v .. "_add"] = 0
     end
     self["Hp"] = self["MaxHp"]
-    self["Energy"] = self["MaxEnergy"]
+    self["Energy"] = 0
 end
 
 function Property:GetValue(name)

@@ -1,5 +1,6 @@
 local Map = class("BattleMap")
 local Grid = require("GameLogic.Battle.Map.MapGrid")
+local PropDef = require("GameLogic.Battle.Unit.Component.Property").PropDef
 
 Map.Direction = {
     North = 0,
@@ -186,6 +187,50 @@ function Map:AStar(uid, source, target)
         end
         return pathList
     end
+end
+
+function Map:GetReachableRegion(uid,distance)
+    local unit = curSession.field:GetUnitByUid(uid)
+    local speed = distance
+    local region = {}
+    local queryArr = {}
+    local closedArr = {}
+    local queryPoint = {
+        point = unit.transform.position,
+        cost = 0
+    }
+    table.insert(queryArr, queryPoint)
+    while #queryArr > 0 do
+        local curPoint = queryArr[1]
+        local bMovable = self:IsGridMovable(uid, curPoint.point)
+        local bStart = unit.transform.position.x == curPoint.point.x and unit.transform.position.y == curPoint.point.y
+        if curPoint.cost <= speed and bMovable then
+            table.insert(region, {x = curPoint.point.x, y = curPoint.point.y})
+        end
+        table.insert(closedArr, curPoint)
+        if bMovable or bStart then
+            for k, v in pairs(self.Direction) do
+                local sidePos = self.GetAdjacentPos(curPoint.point, v)
+                local res =
+                    table.find_if(
+                    closedArr,
+                    function(ele)
+                        return ele.point.x == sidePos.x and ele.point.y == sidePos.y
+                    end
+                )
+                local sideCost = curPoint.cost + 1
+                if res == nil and self:IsCoordValid(sidePos) and sideCost <= speed then
+                    local newPoint = {
+                        point = sidePos,
+                        cost = sideCost
+                    }
+                    table.insert(queryArr, newPoint)
+                end
+            end
+        end
+        table.remove(queryArr, 1)
+    end
+    return region
 end
 -------- utils end ------------
 

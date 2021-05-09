@@ -23,6 +23,7 @@ function PlayCard:OnEnter()
 end
 
 function PlayCard:OnLeave()
+    EventManager:Off(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
 end
 
 function PlayCard:InputOrder(order)

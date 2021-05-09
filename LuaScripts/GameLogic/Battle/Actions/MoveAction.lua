@@ -28,12 +28,16 @@ function Move:Play(inputTable)
 end
 
 function Move:OrganizeParam()
+    self.type = self.GetParam(self.vo, "type")
+    self.target = self.GetParam(self.vo, "target")
+    self.distance = self.GetParam(self.vo, "distance")
+
     local paramTable = {}
-    if self.vo.type == Move.Type.Walk then
+    if self.type == Move.Type.Walk then
         local param_1 = UnitParam.new()
         UnitParam.type = UnitParam.Type.Self
         local param_2 = PathParam.new()
-        param_2.count = self.vo.distance
+        param_2.count = self.distance
         table.insert(paramTable, param_1)
         table.insert(paramTable, param_2)
     end

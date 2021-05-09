@@ -54,6 +54,7 @@ function BattleMainPanel:ctor(obj)
     self.super.ctor(self, obj, setting)
     self.opUnit = nil
     self.opCard = nil
+    self.bReady = false
 
     self.CardView.getFunc = function(index)
         if self.opUnit ~= nil and index <= #self.opUnit.handCards then
@@ -80,8 +81,8 @@ end
 
 function BattleMainPanel:OnConfirm()
     if self.readyOrder ~= nil then
-        EventManager:Emit(EventConst.ON_INPUT_ORDER, self.readyOrder)
         EventManager:Emit(EventConst.ON_CONFIRM_PLAYCARD)
+        EventManager:Emit(EventConst.ON_INPUT_ORDER, self.readyOrder)
     else
         Debug.Error("Temp to confirm play card, but input-param is nil")
     end
@@ -98,6 +99,7 @@ end
 
 function BattleMainPanel:OnSelectUnit(uid)
     self.opUnit = curSession.field:GetUnitByUid(uid)
+    self.opCard = nil
     self:RefreshCardView()
     self.CardView:RefreshView()
 end
@@ -116,17 +118,17 @@ function BattleMainPanel:RefreshCardView()
     self.UnitName.text = self.opUnit and self.opUnit.vo.Name or ""
     self.PassBtn.gameObject:SetActive(self.opCard == nil)
     self.CancelBtn.gameObject:SetActive(self.opCard ~= nil)
-    self.ConfirmBtn.gameObject:SetActive(self.readyOrder ~= nil)
+    self.ConfirmBtn.gameObject:SetActive(self.bReady)
 end
 
 function BattleMainPanel:OnReadyChange(bReady, csOrder)
-    local order = nil
     if bReady then
-        order = InputOrder.new()
+        local order = InputOrder.new()
         order:ParseFromCS(csOrder)
+        self.readyOrder = order
     end
+    self.bReady = bReady
 
-    self.readyOrder = order
     self:RefreshCardView()
 end
 

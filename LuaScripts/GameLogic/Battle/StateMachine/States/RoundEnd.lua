@@ -7,6 +7,7 @@ function RoundEnd:ctor(machine)
 end
 
 function RoundEnd:OnEnter()
+    self.nextState = Base.StateStage.RoundBegin
 end
 
 function RoundEnd:OnLeave()
