@@ -6,6 +6,11 @@ local Property = require("GameLogic.Battle.Unit.Component.Property")
 local setting = {
     Elements = {
         {
+            Name = ".",
+            Type = CS.UnityEngine.UI.Image,
+            Alias = "BackImage"
+        },
+        {
             Name = "CardName",
             Type = CS.UnityEngine.UI.Text
         },
@@ -34,6 +39,8 @@ function StandardCard:InitCard(id)
     local config = CardConfig.Cards[id]
     self.CardName.text = config.name
     self.EnergyCost.text = config.cost
+    local backColor = CardConfig.CardTypeColors[config.type]
+    self.BackImage.color = CS.UnityEngine.Color(backColor.r, backColor.g, backColor.b)
 
     self.EnergyCost.gameObject:SetActive(config.cost ~= 0 and true or false)
     -- "Attributes"

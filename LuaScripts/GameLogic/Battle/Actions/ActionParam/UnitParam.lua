@@ -37,6 +37,7 @@ function UnitParam:ctor()
     self.taskType = Base.TaskType.Target
     self.type = UnitParam.Type.Self
     self.count = 1
+    self.range = 0
 end
 
 -- Interface

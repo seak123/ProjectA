@@ -1,5 +1,6 @@
 local LuaBehaviour = require("GameCore.Frame.LuaBehaviour")
 local CardItem = class("CardItem", LuaBehaviour)
+local CardConfig = require("GameLogic.Config.CardConfig")
 
 local setting = {
     Elements = {
@@ -11,6 +12,11 @@ local setting = {
                 onLongPress = "OnLongPress",
                 onLongPressEnd = "OnLongPressEnd"
             }
+        },
+        {
+            Name = ".",
+            Type = CS.UnityEngine.UI.Image,
+            Alias = "BackImage"
         },
         {
             Name = "CardName",
@@ -47,6 +53,8 @@ function CardItem:SetData(cardEntity)
     self.id = cardEntity.config.id
     self.CardName.text = cardEntity.config.name
     self.EnergyCost.text = cardEntity.config.cost
+    local backColor = CardConfig.CardTypeColors[cardEntity.config.type]
+    self.BackImage.color = CS.UnityEngine.Color(backColor.r, backColor.g, backColor.b)
 
     self.EnergyCost.gameObject:SetActive(cardEntity.config.cost ~= 0 and true or false)
 

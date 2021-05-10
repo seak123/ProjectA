@@ -14,29 +14,29 @@ this.CardType = {
 
 this.CardTypeColors = {
     [this.CardType.Common] = {
-        r = 1,
-        g = 1,
-        b = 1
+        r = 0.7,
+        g = 0.7,
+        b = 0.7
     },
     [this.CardType.Strategy] = {
-        r = 1,
-        g = 1,
-        b = 1
+        r = 0.21,
+        g = 0.38,
+        b = 0.75
     },
     [this.CardType.Violence] = {
-        r = 1,
-        g = 1,
-        b = 1
+        r = 0.7,
+        g = 0.28,
+        b = 0.27
     },
     [this.CardType.Trick] = {
-        r = 1,
-        g = 1,
-        b = 1
+        r = 0.3,
+        g = 0.3,
+        b = 0.3
     },
     [this.CardType.Harmony] = {
-        r = 1,
-        g = 1,
-        b = 1
+        r = 0.42,
+        g = 0.66,
+        b = 0.42
     }
 }
 

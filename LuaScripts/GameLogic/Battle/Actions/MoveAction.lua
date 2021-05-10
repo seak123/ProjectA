@@ -11,7 +11,7 @@ Move.Type = {
 
 -- default value
 Move.type = Move.Type.Walk
-Move.target = Base.TargetType.Self
+Move.target = UnitParam.Self()
 Move.distance = 1
 
 function Move:ctor(vo)
@@ -35,7 +35,9 @@ function Move:OrganizeParam()
     local paramTable = {}
     if self.type == Move.Type.Walk then
         local param_1 = UnitParam.new()
-        UnitParam.type = UnitParam.Type.Self
+        UnitParam.type = self.target.targetType
+        UnitParam.count = self.target.count
+        UnitParam.range = self.target.range
         local param_2 = PathParam.new()
         param_2.count = self.distance
         table.insert(paramTable, param_1)
