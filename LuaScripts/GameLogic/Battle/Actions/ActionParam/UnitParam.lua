@@ -8,6 +8,30 @@ UnitParam.Type = {
     Enemy = 3
 }
 
+UnitParam.Self = function()
+    return {
+        targetType = UnitParam.Type.Self,
+        count = 1,
+        range = 0
+    }
+end
+
+UnitParam.Enemy = function(num, dis)
+    return {
+        targetType = UnitParam.Type.Enemy,
+        count = num,
+        range = dis
+    }
+end
+
+UnitParam.Friend = function(num, dis)
+    return {
+        targetType = UnitParam.Type.Enemy,
+        count = num,
+        range = dis
+    }
+end
+
 function UnitParam:ctor()
     -- Param
     self.taskType = Base.TaskType.Target
