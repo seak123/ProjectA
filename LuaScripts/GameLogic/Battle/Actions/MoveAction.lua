@@ -19,12 +19,28 @@ function Move:ctor(vo)
     self.paramTable = self:OrganizeParam()
 end
 
-function Move:Play(inputTable)
+function Move:InputOrder(inputTable)
+    local params = {}
     if self.vo.type == Move.Type.Walk then
-        local target = self.paramTable[1]:FetchParam(inputTable)[1]
+        local targets = self.paramTable[1]:FetchParam(inputTable)
         local path = self.paramTable[2]:FetchParam(inputTable)
-        MoveRawAct.Execute(target, path)
+        params = {
+            targets = targets,
+            path = path
+        }
     end
+    self:Play(params)
+end
+
+function Move:Play(params)
+    if self.vo.type == Move.Type.Walk then
+        MoveRawAct.Execute(params.targets[1], params.path)
+    end
+    self:PlaySubAction(params)
+end
+
+function Move:InputOrder(inputTable)
+    -- body
 end
 
 function Move:OrganizeParam()

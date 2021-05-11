@@ -35,4 +35,14 @@ end
 function BaseAction:OrganizeParam()
 end
 
+function BaseAction:PlaySubAction(params)
+    local subActions = self.vo.subActions
+    if subActions ~= nil and #subActions > 0 then
+        for i = 1, #subActions do
+            local action = require(subActions[i].actionType).new(subActions[i])
+            action:Play(params)
+        end
+    end
+end
+
 return BaseAction

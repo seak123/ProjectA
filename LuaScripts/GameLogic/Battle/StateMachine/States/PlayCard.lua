@@ -32,7 +32,7 @@ function PlayCard:InputOrder(order)
         -- TODO: check whether input is valid here
         for i = 1, #actions do
             local action = require(actions[i].actionType).new(actions[i].actionParams)
-            action:Play(order.paramTable)
+            action:InputOrder(order.paramTable)
         end
         curSession.stateMachine.curOpUnit:PlayACard(self.selectCard.uid)
         curSession.stateMachine.passCounter = 0
