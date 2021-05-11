@@ -4,6 +4,8 @@ BaseAction.ActionType = {
     Move = "GameLogic.Battle.Actions.MoveAction"
 }
 
+-- SubAction Trigger: "string": eventName; "number": delayTime; "nil": sequence
+
 function BaseAction:ctor()
 end
 
@@ -35,12 +37,26 @@ end
 function BaseAction:OrganizeParam()
 end
 
-function BaseAction:PlaySubAction(params)
+function BaseAction:PlaySubAction(rootNode, params)
     local subActions = self.vo.subActions
     if subActions ~= nil and #subActions > 0 then
         for i = 1, #subActions do
             local action = require(subActions[i].actionType).new(subActions[i])
-            action:Play(params)
+            local node = action:Play(params)
+            local trigger = subActions[i].Trigger
+            if trigger ~= nil then
+                if type(trigger) == "string" then
+                    node.event = trigger
+                    rootNode:AddCompanion(node)
+                elseif type(trigger) == "number" then
+                    node.delay = trigger
+                    rootNode:AddCompanion(node)
+                else
+                    Debug.Error("SubAction trigger-value is invalid type")
+                end
+            else
+                rootNode:AddFollower(node)
+            end
         end
     end
 end

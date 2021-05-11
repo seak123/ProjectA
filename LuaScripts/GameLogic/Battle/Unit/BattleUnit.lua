@@ -60,6 +60,10 @@ function Unit:OnRoundBegin()
     end
 end
 
+function Unit:OnDamage(source, value)
+    self.property:AddValue(self.property.PropDef.Hp, -value)
+end
+
 -------------- trigger start -----------------
 local RegTrigger = function(TrigName)
     Unit[TrigName] = function(self)

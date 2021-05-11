@@ -2,17 +2,16 @@ local Performer = class("BattlePerformer")
 
 function Performer:ctor()
     self.rootNode = nil
-    self.curNode = nil
+    self.lastNode = nil
 end
 
 function Performer:PushNode(node)
     if self.rootNode == nil then
         self.rootNode = node
-        self.curNode = self.rootNode
     else
         self.curNode:AddFollower(node)
-        self.curNode = node
     end
+    self.lastNode
 end
 
 function Performer:Perform()

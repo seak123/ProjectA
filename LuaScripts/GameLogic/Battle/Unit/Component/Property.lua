@@ -33,7 +33,19 @@ end
 function Property:GetValue(name)
     local base = self[name] == nil and 0 or self[name]
     local add = self[name .. "_add"] == nil and 0 or self[name .. "_add"]
-    return base + add
+    return math.max(0, base + add)
+end
+
+function Property:AddValue(name, value)
+    if name == Property.PropDef.Hp then
+        local res = self["Hp"] + value
+        self["Hp"] = Math.clamp(res, 0, self:GetValue("MaxHp"))
+    elseif name == Property.PropDef.Energy then
+        local res = self["Energy"] + value
+        self["Energy"] = Math.clamp(res, 0, self:GetValue("MaxEnergy"))
+    else
+        self[name] = self[name] + value
+    end
 end
 
 return Property

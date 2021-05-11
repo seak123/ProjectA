@@ -29,18 +29,16 @@ function Move:InputOrder(inputTable)
             path = path
         }
     end
-    self:Play(params)
+    return self:Play(params)
 end
 
 function Move:Play(params)
+    local node
     if self.vo.type == Move.Type.Walk then
-        MoveRawAct.Execute(params.targets[1], params.path)
+        node = MoveRawAct.Execute(params.targets[1], params.path)
     end
-    self:PlaySubAction(params)
-end
-
-function Move:InputOrder(inputTable)
-    -- body
+    self:PlaySubAction(node, params)
+    return node
 end
 
 function Move:OrganizeParam()

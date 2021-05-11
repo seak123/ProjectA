@@ -30,7 +30,7 @@ function Map:CreateUnit(unit)
     curGrid.standingUnit = unit
 end
 function Map:MoveUnit(unit, point)
-    local direction = self.GetDirection(unit.transform.position, point)
+    local direction = self.TurnUnitToPoint(unit, point)
     local goal = point
     local index = self:Coord2Index(goal)
     local curGrid = self.grids[self:Coord2Index(unit.transform.position)]
@@ -61,21 +61,52 @@ function Map:Coord2Index(vector)
     end
     return vector.y * self.mapWidth + vector.x
 end
-function Map.GetDirection(start, goal)
-    local delta = goal.x - start.x
-    if delta == 0 then
-        delta = 0.01
-    end
+
+function Map.TurnUnitToPoint(unit, goal)
+    local start = unit.transform.position
+
     local direction = nil
-    local isVague = false
-    local k = math.abs((goal.y - start.y) / delta)
-    if k >= 1 then
-        direction = goal.y > start.y and Map.Direction.North or Map.Direction.Sourth
+
+    local isVague = math.abs(goal.y - start.y) == math.abs(goal.x - start.x)
+    if isVague then
+        local deltaY = goal.y - start.y
+        local deltaX = goal.x - start.x
+        local direction_1, direction_2
+        if deltaY > 0 and deltaX > 0 then
+            direction_1 = Map.Direction.North
+            direction_2 = Map.Direction.East
+        elseif deltaY > 0 and deltaX < 0 then
+            direction_1 = Map.Direction.North
+            direction_2 = Map.Direction.West
+        elseif deltaY < 0 and deltaX > 0 then
+            direction_1 = Map.Direction.Sourth
+            direction_2 = Map.Direction.East
+        else
+            direction_1 = Map.Direction.Sourth
+            direction_2 = Map.Direction.West
+        end
+        local turn_1 = math.abs(unit.transform.direction - direction_1)
+        local turn_2 = math.abs(unit.transform.direction - direction_2)
+        if turn_1 == turn_2 then
+            direction = unit.transform.direction
+        elseif turn_1 > turn_2 then
+            direction = direction_2
+        else
+            direction = direction_1
+        end
     else
-        direction = goal.x > start.x and Map.Direction.East or Map.Direction.West
+        local delta = goal.x - start.x
+        if delta == 0 then
+            delta = 0.01
+        end
+        local k = math.abs((goal.y - start.y) / delta)
+        if k >= 1 then
+            direction = goal.y > start.y and Map.Direction.North or Map.Direction.Sourth
+        else
+            direction = goal.x > start.x and Map.Direction.East or Map.Direction.West
+        end
     end
-    isVague = math.abs(goal.y - start.y) == math.abs(goal.x - start.x)
-    return direction, isVague
+    return direction
 end
 function Map.GetAdjacentPos(pos, direction)
     if direction == Map.Direction.North then
@@ -189,7 +220,7 @@ function Map:AStar(uid, source, target)
     end
 end
 
-function Map:GetReachableRegion(uid,distance)
+function Map:GetReachableRegion(uid, distance)
     local unit = curSession.field:GetUnitByUid(uid)
     local speed = distance
     local region = {}

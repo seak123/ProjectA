@@ -43,6 +43,16 @@ this.bitNOT = function(n)
     return c
 end
 
+this.clamp = function(value, min, max)
+    if value < min then
+        return min
+    elseif value > max then
+        return max
+    else
+        return value
+    end
+end
+
 this.Vector2 = {
     distance = function(a, b)
         local d_x = a.x - b.x

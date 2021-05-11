@@ -1,8 +1,13 @@
 local BaseNode = class("BaseNode")
 
 BaseNode.NodeType = {
-    Move = 1
+    Move = 1,
+    Anim = 2,
+    Damage = 3
 }
+
+BaseNode.event = ""
+BaseNode.delay = 0
 
 function BaseNode:ctor()
     self.followers = {}
