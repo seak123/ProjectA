@@ -1,6 +1,6 @@
 local Base = require("GameLogic.Battle.Actions.BaseAction")
 local Melee = class("MeleeAction", Base)
-local FaceAnimRawAct = require("GameLogic.Battle.Actions.RawAction.AnimRawAction")
+local FaceAnimRawAct = require("GameLogic.Battle.Actions.RawAction.FaceAnimRawAction")
 local UnitParam = require("GameLogic.Battle.Actions.ActionParam.UnitParam")
 local PathParam = require("GameLogic.Battle.Actions.ActionParam.PathParam")
 

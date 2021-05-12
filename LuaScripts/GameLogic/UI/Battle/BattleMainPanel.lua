@@ -44,6 +44,7 @@ local setting = {
             Name = "AnchorBottom/DiscardBtn",
             Alias = "DiscardBtn",
             Type = CS.UnityEngine.UI.Button,
+            Necessary = false,
             Handler = {
                 onClick = "OnReqDiscard"
             }
