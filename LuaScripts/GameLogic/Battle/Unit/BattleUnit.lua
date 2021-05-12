@@ -65,7 +65,9 @@ function Unit:OnRoundEnd()
 end
 
 function Unit:OnDamage(source, value)
+    Debug.Log("unit hurt here")
     self.property:AddValue(self.property.PropDef.Hp, -value)
+    Debug.Log("now hp is",tostring(self.property:GetValue(self.property.PropDef.Hp)))
 end
 
 -------------- trigger start -----------------

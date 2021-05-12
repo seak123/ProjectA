@@ -36,9 +36,9 @@ function Damage:OrganizeParam()
     local paramTable = {}
 
     local param_1 = UnitParam.new()
-    UnitParam.type = self.target.targetType
-    UnitParam.count = self.target.count
-    UnitParam.range = self.target.range
+    param_1.type = self.target.targetType
+    param_1.count = self.target.count
+    param_1.range = self.target.range
 
     table.insert(paramTable, param_1)
 
