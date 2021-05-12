@@ -32,12 +32,14 @@ function Move:InputOrder(inputTable)
     return self:Play(params)
 end
 
-function Move:Play(params)
+function Move:Play(params,bCompanion)
     local node
     if self.vo.type == Move.Type.Walk then
         node = MoveRawAct.Execute(params.targets[1], params.path)
+        curSession.performer:PushNode(node,bCompanion)
     end
     self:PlaySubAction(node, params)
+    curSession.performer:Fallback()
     return node
 end
 

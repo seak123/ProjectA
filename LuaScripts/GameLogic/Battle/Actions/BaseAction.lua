@@ -42,20 +42,19 @@ function BaseAction:PlaySubAction(rootNode, params)
     if subActions ~= nil and #subActions > 0 then
         for i = 1, #subActions do
             local action = require(subActions[i].actionType).new(subActions[i])
-            local node = action:Play(params)
             local trigger = subActions[i].Trigger
             if trigger ~= nil then
                 if type(trigger) == "string" then
+                    local node = action:Play(params,true)
                     node.event = trigger
-                    rootNode:AddCompanion(node)
                 elseif type(trigger) == "number" then
+                    local node = action:Play(params,true)
                     node.delay = trigger
-                    rootNode:AddCompanion(node)
                 else
                     Debug.Error("SubAction trigger-value is invalid type")
                 end
             else
-                rootNode:AddFollower(node)
+                action:Play(params)
             end
         end
     end

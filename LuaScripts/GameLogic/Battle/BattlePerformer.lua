@@ -2,16 +2,26 @@ local Performer = class("BattlePerformer")
 
 function Performer:ctor()
     self.rootNode = nil
-    self.lastNode = nil
+    self.curNode = nil
 end
 
-function Performer:PushNode(node)
+function Performer:PushNode(node, bCompanion)
     if self.rootNode == nil then
         self.rootNode = node
     else
-        self.curNode:AddFollower(node)
+        if bCompanion == nil or bCompanion == false then
+            self.curNode:AddFollower(node)
+        else
+            self.curNode:AddCompanion(node)
+        end
     end
-    self.lastNode
+    self.curNode = node
+end
+
+function Performer:Fallback()
+    if self.curNode.parent ~= nil then
+        self.curNode = self.curNode.parent
+    end
 end
 
 function Performer:Perform()
