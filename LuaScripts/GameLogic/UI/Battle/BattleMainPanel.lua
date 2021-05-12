@@ -39,6 +39,14 @@ local setting = {
             Handler = {
                 onClick = "OnReqCancel"
             }
+        },
+        {
+            Name = "AnchorBottom/DiscardBtn",
+            Alias = "DiscardBtn",
+            Type = CS.UnityEngine.UI.Button,
+            Handler = {
+                onClick = "OnReqDiscard"
+            }
         }
     },
     Events = {
@@ -130,6 +138,9 @@ function BattleMainPanel:OnReadyChange(bReady, csOrder)
     self.bReady = bReady
 
     self:RefreshCardView()
+end
+
+function BattleMainPanel:OnReqDiscard()
 end
 
 return BattleMainPanel

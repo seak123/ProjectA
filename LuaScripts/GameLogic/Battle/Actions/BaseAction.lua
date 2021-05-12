@@ -1,7 +1,10 @@
 local BaseAction = class("BaseAction")
 
 BaseAction.ActionType = {
-    Move = "GameLogic.Battle.Actions.MoveAction"
+    Move = "GameLogic.Battle.Actions.MoveAction",
+    Damage = "GameLogic.Battle.Actions.DamageAction",
+    Hurt = "GameLogic.Battle.Actions.HurtAction",
+    Melee = "GameLogic.Battle.Actions.MeleeAction"
 }
 
 -- SubAction Trigger: "string": eventName; "number": delayTime; "nil": sequence
@@ -37,7 +40,7 @@ end
 function BaseAction:OrganizeParam()
 end
 
-function BaseAction:PlaySubAction(rootNode, params)
+function BaseAction:PlaySubAction(params)
     local subActions = self.vo.subActions
     if subActions ~= nil and #subActions > 0 then
         for i = 1, #subActions do
@@ -45,10 +48,10 @@ function BaseAction:PlaySubAction(rootNode, params)
             local trigger = subActions[i].Trigger
             if trigger ~= nil then
                 if type(trigger) == "string" then
-                    local node = action:Play(params,true)
+                    local node = action:Play(params, true)
                     node.event = trigger
                 elseif type(trigger) == "number" then
-                    local node = action:Play(params,true)
+                    local node = action:Play(params, true)
                     node.delay = trigger
                 else
                     Debug.Error("SubAction trigger-value is invalid type")

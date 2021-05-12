@@ -38,7 +38,7 @@ function Move:Play(params,bCompanion)
         node = MoveRawAct.Execute(params.targets[1], params.path)
         curSession.performer:PushNode(node,bCompanion)
     end
-    self:PlaySubAction(node, params)
+    self:PlaySubAction(params)
     curSession.performer:Fallback()
     return node
 end

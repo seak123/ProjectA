@@ -1,15 +1,24 @@
 local Base = require("GameLogic.Battle.Actions.BaseAction")
-local Melee = class("MeleeAction", Base)
-local FaceAnimRawAct = require("GameLogic.Battle.Actions.RawAction.AnimRawAction")
+local Hurt = class("HurtAction", Base)
+local ComAnimRawAct = require("GameLogic.Battle.Actions.RawAction.ComAnimRawAction")
 local UnitParam = require("GameLogic.Battle.Actions.ActionParam.UnitParam")
 local PathParam = require("GameLogic.Battle.Actions.ActionParam.PathParam")
 
-function Melee:ctor(vo)
+Hurt.SourceType = {
+    Unit = 1,
+    Ground = 2
+}
+
+-- default value
+Hurt.sourceType = Hurt.SourceType.Unit
+Hurt.source = 0
+
+function Hurt:ctor(vo)
     self.vo = vo
     self.paramTable = self:OrganizeParam()
 end
 
-function Melee:InputOrder(inputTable)
+function Hurt:InputOrder(inputTable)
     local params = {}
 
     local targets = self.paramTable[1]:FetchParam(inputTable)
@@ -21,27 +30,18 @@ function Melee:InputOrder(inputTable)
     return self:Play(params)
 end
 
-function Melee:Play(params, bCompanion)
-    local node = FaceAnimRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], "Melee")
+function Hurt:Play(params, bCompanion)
+    local node = ComAnimRawAct.Execute(curSession.stateMachine.curOpUnit.uid, "Hurt")
     curSession.performer:PushNode(node, bCompanion)
     self:PlaySubAction(params)
     curSession.performer:Fallback()
     return node
 end
 
-function Melee:OrganizeParam()
-    self.target = self.GetParam(self.vo, "target")
-
+function Hurt:OrganizeParam()
     local paramTable = {}
-
-    local param_1 = UnitParam.new()
-    UnitParam.type = self.target.targetType
-    UnitParam.count = self.target.count
-    UnitParam.range = self.target.range
-
-    table.insert(paramTable, param_1)
 
     return paramTable
 end
 
-return Melee
+return Hurt

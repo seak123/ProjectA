@@ -60,6 +60,10 @@ function Unit:OnRoundBegin()
     end
 end
 
+function Unit:OnRoundEnd()
+    --self.vo.RoundEndKeepNum
+end
+
 function Unit:OnDamage(source, value)
     self.property:AddValue(self.property.PropDef.Hp, -value)
 end
@@ -71,6 +75,7 @@ local RegTrigger = function(TrigName)
     end
 end
 
+-- simple trigger register
 RegTrigger("PostMove")
 -------------- trigger end -------------------
 
