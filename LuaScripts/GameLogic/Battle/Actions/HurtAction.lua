@@ -13,8 +13,9 @@ Hurt.SourceType = {
 Hurt.sourceType = Hurt.SourceType.Unit
 Hurt.source = 0
 
-function Hurt:ctor(vo)
+function Hurt:ctor(vo, subActions)
     self.vo = vo
+    self.subActions = subActions
     self.paramTable = self:OrganizeParam()
 end
 

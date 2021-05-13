@@ -31,7 +31,7 @@ function PlayCard:InputOrder(order)
         local actions = self.selectCard.config.actions
         -- TODO: check whether input is valid here
         for i = 1, #actions do
-            local action = require(actions[i].actionType).new(actions[i].actionParams)
+            local action = require(actions[i].actionType).new(actions[i].actionParams,actions[i].subActions)
             action:InputOrder(order.paramTable)
         end
         curSession.stateMachine.curOpUnit:PlayACard(self.selectCard.uid)

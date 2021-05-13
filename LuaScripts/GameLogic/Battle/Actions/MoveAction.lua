@@ -14,8 +14,9 @@ Move.type = Move.Type.Walk
 Move.target = UnitParam.Self()
 Move.distance = 1
 
-function Move:ctor(vo)
+function Move:ctor(vo, subActions)
     self.vo = vo
+    self.subActions = subActions
     self.paramTable = self:OrganizeParam()
 end
 
@@ -32,11 +33,11 @@ function Move:InputOrder(inputTable)
     return self:Play(params)
 end
 
-function Move:Play(params,bCompanion)
+function Move:Play(params, bCompanion)
     local node
     if self.vo.type == Move.Type.Walk then
         node = MoveRawAct.Execute(params.targets[1], params.path)
-        curSession.performer:PushNode(node,bCompanion)
+        curSession.performer:PushNode(node, bCompanion)
     end
     self:PlaySubAction(params)
     curSession.performer:Fallback()

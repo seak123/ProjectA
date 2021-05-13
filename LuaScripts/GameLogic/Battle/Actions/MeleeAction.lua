@@ -4,8 +4,9 @@ local FaceAnimRawAct = require("GameLogic.Battle.Actions.RawAction.FaceAnimRawAc
 local UnitParam = require("GameLogic.Battle.Actions.ActionParam.UnitParam")
 local PathParam = require("GameLogic.Battle.Actions.ActionParam.PathParam")
 
-function Melee:ctor(vo)
+function Melee:ctor(vo,subActions)
     self.vo = vo
+    self.subActions = subActions
     self.paramTable = self:OrganizeParam()
 end
 

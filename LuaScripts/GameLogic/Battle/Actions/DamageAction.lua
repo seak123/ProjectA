@@ -4,8 +4,9 @@ local DamageRawAct = require("GameLogic.Battle.Actions.RawAction.DamageRawAction
 local UnitParam = require("GameLogic.Battle.Actions.ActionParam.UnitParam")
 local PathParam = require("GameLogic.Battle.Actions.ActionParam.PathParam")
 
-function Damage:ctor(vo)
+function Damage:ctor(vo, subActions)
     self.vo = vo
+    self.subActions = subActions
     self.paramTable = self:OrganizeParam()
 end
 
@@ -22,7 +23,7 @@ function Damage:InputOrder(inputTable)
 end
 
 function Damage:Play(params, bcompanion)
-    local node = DamageRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], "Melee")
+    local node = DamageRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], self.vo.damage)
     curSession.performer:PushNode(node, bcompanion)
     self:PlaySubAction(params)
     curSession.performer:Fallback()
