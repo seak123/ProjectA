@@ -48,11 +48,10 @@ function BaseAction:PlaySubAction(params)
             local trigger = subActions[i].Trigger
             if trigger ~= nil then
                 if type(trigger) == "string" then
-                    local node = action:Play(params, true)
-                    node.event = trigger
+                    action:Play(params, true, {event = trigger, delay = 0})
                 elseif type(trigger) == "number" then
-                    local node = action:Play(params, true)
-                    node.delay = trigger
+                    params.delay = trigger
+                    local node = action:Play(params, true, {event = "", delay = trigger})
                 else
                     Debug.Error("SubAction trigger-value is invalid type")
                 end

@@ -4,7 +4,7 @@ local FaceAnimRawAct = require("GameLogic.Battle.Actions.RawAction.FaceAnimRawAc
 local UnitParam = require("GameLogic.Battle.Actions.ActionParam.UnitParam")
 local PathParam = require("GameLogic.Battle.Actions.ActionParam.PathParam")
 
-function Melee:ctor(vo,subActions)
+function Melee:ctor(vo, subActions)
     self.vo = vo
     self.subActions = subActions
     self.paramTable = self:OrganizeParam()
@@ -22,12 +22,10 @@ function Melee:InputOrder(inputTable)
     return self:Play(params)
 end
 
-function Melee:Play(params, bCompanion)
-    local node = FaceAnimRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], "Melee")
-    curSession.performer:PushNode(node, bCompanion)
+function Melee:Play(params, bCompanion, trigger)
+    FaceAnimRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], "Melee", bCompanion, trigger)
     self:PlaySubAction(params)
     curSession.performer:Fallback()
-    return node
 end
 
 function Melee:OrganizeParam()

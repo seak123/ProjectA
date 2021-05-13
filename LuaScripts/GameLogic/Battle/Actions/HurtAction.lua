@@ -31,12 +31,10 @@ function Hurt:InputOrder(inputTable)
     return self:Play(params)
 end
 
-function Hurt:Play(params, bCompanion)
-    local node = ComAnimRawAct.Execute(curSession.stateMachine.curOpUnit.uid, "Hurt")
-    curSession.performer:PushNode(node, bCompanion)
+function Hurt:Play(params, bCompanion, trigger)
+    ComAnimRawAct.Execute(curSession.stateMachine.curOpUnit.uid, "Hurt", bCompanion, trigger)
     self:PlaySubAction(params)
     curSession.performer:Fallback()
-    return node
 end
 
 function Hurt:OrganizeParam()

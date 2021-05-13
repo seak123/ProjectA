@@ -22,13 +22,10 @@ function Damage:InputOrder(inputTable)
     return self:Play(params)
 end
 
-function Damage:Play(params, bcompanion)
-    local node = DamageRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], self.vo.damage)
-    curSession.performer:PushNode(node, bcompanion)
+function Damage:Play(params, bcompanion, trigger)
+    DamageRawAct.Execute(curSession.stateMachine.curOpUnit.uid, params.targets[1], self.vo.damage, bcompanion, trigger)
     self:PlaySubAction(params)
     curSession.performer:Fallback()
-
-    return node
 end
 
 function Damage:OrganizeParam()

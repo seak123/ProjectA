@@ -3,6 +3,7 @@ local Unit = class("BattleUnit", Base)
 local Property = require("GameLogic.Battle.Unit.Component.Property")
 local Transform = require("GameLogic.Battle.Unit.Component.Transform")
 local CardEntity = require("GameLogic.Battle.Card.CardEntity")
+local ComAnimRawAct = require("GameLogic.Battle.Actions.RawAction.ComAnimRawAction")
 
 function Unit:ctor(unitVO)
     self.vo = unitVO
@@ -65,9 +66,10 @@ function Unit:OnRoundEnd()
 end
 
 function Unit:OnDamage(source, value)
-    Debug.Log("unit hurt here")
     self.property:AddValue(self.property.PropDef.Hp, -value)
-    Debug.Log("now hp is",tostring(self.property:GetValue(self.property.PropDef.Hp)))
+    
+    ComAnimRawAct.Execute(self.uid,"Hurt")
+    curSession.performer:Fallback()
 end
 
 -------------- trigger start -----------------

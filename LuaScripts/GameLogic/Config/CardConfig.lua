@@ -110,7 +110,7 @@ this.Cards = {
                 },
                 subActions = {
                     {
-                        Trigger = "Hit",
+                        Trigger = 0.4,
                         actionType = ActionType.Damage,
                         actionParams = {
                             target = UnitParam.Enemy(1, 1),

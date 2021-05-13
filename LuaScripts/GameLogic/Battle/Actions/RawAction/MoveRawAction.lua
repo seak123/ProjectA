@@ -1,7 +1,7 @@
 local MoveRawAction = {}
 local MoveNode = require("GameLogic.Battle.Actions.PerformNode.MoveNode")
 
-function MoveRawAction.Execute(uid, path)
+function MoveRawAction.Execute(uid, path, bCompanion, trigger)
     local target = curSession.field:GetUnitByUid(uid)
     local rootNode, curNode
     for i = 1, #path do
@@ -17,6 +17,9 @@ function MoveRawAction.Execute(uid, path)
         end
         curNode = node
     end
+    rootNode.event = trigger and trigger.event
+    rootNode.delay = trigger and trigger.delay
+    curSession.performer:PushNode(rootNode, bCompanion)
     return rootNode
 end
 
