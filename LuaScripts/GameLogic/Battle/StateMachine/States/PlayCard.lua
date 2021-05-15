@@ -3,6 +3,8 @@ local PlayCard = class("PlayCard", Base)
 local Order = require("GameLogic.Battle.Trace.InputOrder")
 local BattleLib = CS.BattleLuaLibrary
 
+PlayCard.key = Base.StateStage.PlayCard
+
 function PlayCard:ctor(machine)
     self.machine = machine
     self.nextState = Base.StateStage.NoneStage
@@ -10,7 +12,7 @@ end
 
 function PlayCard:OnEnter()
     local conditionFunc = function(unit)
-        if unit.vo.Camp == curSession.stateMachine.curActCamp then
+        if unit.camp == curSession.stateMachine.curActCamp then
             return true
         end
         return false

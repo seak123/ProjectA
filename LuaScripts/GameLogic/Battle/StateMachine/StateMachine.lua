@@ -18,11 +18,15 @@ function Machine:ctor()
     self.curState = nil
     self.curActCamp = 1 -- 行动方
     self.curOpUnit = nil -- 操作单位
+    self.curSelectCards = {} -- 当前选中的卡片
     self.passCounter = 0 -- 空过数
     self.skipActSwitch = false
 
     EventManager:On(EventConst.ON_SELECT_OP_UNIT, self.OnSelectOpUnit, self)
     EventManager:On(EventConst.ON_INPUT_ORDER, self.InputOrder, self)
+    EventManager:On(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
+    EventManager:On(EventConst.ON_UNSELECT_CARD, self.OnUnSelectCard, self)
+    EventManager:On(EventConst.ON_CANCEL_SELECT, self.OnCanelAll, self)
 end
 
 function Machine:InputOrder(order)
@@ -61,6 +65,40 @@ end
 
 function Machine:OnSelectOpUnit(uid)
     self.curOpUnit = curSession.field:GetUnitByUid(uid)
+    self.curSelectCards = {}
+end
+
+function Machine:OnSelectCard(uid)
+    if not table.contains(self.curSelectCards, uid) then
+        table.insert(self.curSelectCards, uid)
+    end
+    EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
+end
+
+function Machine:OnUnSelectCard(uid)
+    table.remove_if(
+        self.curSelectCards,
+        function(ele)
+            return ele == uid
+        end
+    )
+    EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
+    self:NotifyPerformLayer()
+end
+
+function Machine:OnCanelAll()
+    for i = 1, #self.curSelectCards do
+        EventManager:Emit(EventConst.ON_UNSELECT_CARD, self.curSelectCards[i])
+    end
+    self.curSelectCards = {}
+    EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
+    self:NotifyPerformLayer()
+end
+
+function Machine:NotifyPerformLayer()
+    if self.curState.key == BaseState.StateStage.PlayCard and #self.curSelectCards == 0 then
+        EventManager:Emit(EventConst.ON_QUIT_PALYCARD)
+    end
 end
 
 return Machine

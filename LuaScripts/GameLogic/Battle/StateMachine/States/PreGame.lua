@@ -2,6 +2,8 @@ local Base = require("GameLogic.Battle.StateMachine.States.BaseState")
 local PreGame = class("PreGame", Base)
 local BattleConst = require("GameLogic.Battle.BattleConst")
 
+PreGame.key = Base.StateStage.PreGame
+
 function PreGame:ctor(machine)
     self.machine = machine
     self.nextState = Base.StateStage.NoneStage

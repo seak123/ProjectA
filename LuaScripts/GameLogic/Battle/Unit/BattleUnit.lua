@@ -7,6 +7,7 @@ local ComAnimRawAct = require("GameLogic.Battle.Actions.RawAction.ComAnimRawActi
 
 function Unit:ctor(unitVO)
     self.vo = unitVO
+    self.camp = unitVO.Camp
     self.uid = 0
     self.handCards = {}
     self.cardPile = {}

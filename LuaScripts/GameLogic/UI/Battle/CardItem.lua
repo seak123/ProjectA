@@ -38,7 +38,7 @@ local setting = {
     },
     Events = {
         [EventConst.ON_SELECT_CARD] = "OnSelect",
-        [EventConst.ON_CANCEL_PLAYCARD] = "OnCancel"
+        [EventConst.ON_UNSELECT_CARD] = "OnCancel"
     }
 }
 
@@ -73,7 +73,7 @@ end
 
 function CardItem:OnClick()
     if self.selected then
-        EventManager:Emit(EventConst.ON_CANCEL_PLAYCARD)
+        EventManager:Emit(EventConst.ON_UNSELECT_CARD, self.uid)
     else
         EventManager:Emit(EventConst.ON_SELECT_CARD, self.uid)
     end
@@ -92,9 +92,11 @@ function CardItem:OnSelect(uid)
     self.Selected:SetActive(self.selected)
 end
 
-function CardItem:OnCancel()
-    self.selected = false
-    self.Selected:SetActive(false)
+function CardItem:OnCancel(uid)
+    if uid == self.uid then
+        self.selected = false
+        self.Selected:SetActive(false)
+    end
 end
 
 return CardItem

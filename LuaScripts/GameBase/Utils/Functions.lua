@@ -21,13 +21,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ]]
-
 --[[--
 
 提供一组常用函数，以及对 Lua 标准库的扩展
 
 ]]
-
 --[[--
 
 输出格式化字符串
@@ -83,7 +81,7 @@ end
 
 ]]
 function checkbool(value)
-    return(value ~= nil and value ~= false)
+    return (value ~= nil and value ~= false)
 end
 
 --[[--
@@ -96,7 +94,9 @@ end
 
 ]]
 function checktable(value)
-    if type(value) ~= "table" then value = { } end
+    if type(value) ~= "table" then
+        value = {}
+    end
     return value
 end
 
@@ -112,7 +112,7 @@ end
 ]]
 function isset(hashtable, key)
     local t = type(hashtable)
-    return(t == "table" or t == "userdata") and hashtable[key] ~= nil
+    return (t == "table" or t == "userdata") and hashtable[key] ~= nil
 end
 
 --[[--
@@ -139,14 +139,14 @@ t2.b = 3    -- t1 = {a = 1, b = 2} <-- t1.b 不受影响
 
 ]]
 function clone(object)
-    local lookup_table = { }
+    local lookup_table = {}
     local function _copy(object)
         if type(object) ~= "table" then
             return object
         elseif lookup_table[object] then
             return lookup_table[object]
         end
-        local new_table = { }
+        local new_table = {}
         lookup_table[object] = new_table
         for key, value in pairs(object) do
             new_table[_copy(key)] = _copy(value)
@@ -277,7 +277,6 @@ end
 @return table
 
 ]]
-
 function class(classname, super)
     local superType = type(super)
     local cls
@@ -287,18 +286,21 @@ function class(classname, super)
         super = nil
     end
 
-    if superType == "function" or(super and super.__ctype == 1) then
+    if superType == "function" or (super and super.__ctype == 1) then
         -- inherited from native C++ Object
-        cls = { }
+        cls = {}
 
         if superType == "table" then
             -- copy fields from super
-            for k, v in pairs(super) do cls[k] = v end
+            for k, v in pairs(super) do
+                cls[k] = v
+            end
             cls.__create = super.__create
             cls.super = super
         else
             cls.__create = super
-            cls.ctor = function() end
+            cls.ctor = function()
+            end
         end
 
         cls.__cname = classname
@@ -307,22 +309,23 @@ function class(classname, super)
         function cls.new(...)
             local instance = cls.__create(...)
             -- copy fields from class to native object
-            for k, v in pairs(cls) do instance[k] = v end
+            for k, v in pairs(cls) do
+                instance[k] = v
+            end
             instance.class = cls
             instance:ctor(...)
             return instance
         end
-
     else
         -- inherited from Lua Object
         if super then
-            cls = { }
-            setmetatable(cls, { __index = super })
+            cls = {}
+            setmetatable(cls, {__index = super})
             cls.super = super
-            
         else
-            cls = { }
-            cls.ctor = function() end
+            cls = {}
+            cls.ctor = function()
+            end
         end
 
         cls.__cname = classname
@@ -330,7 +333,7 @@ function class(classname, super)
         cls.__index = cls
 
         function cls.new(...)
-            local instance = setmetatable( { }, cls)
+            local instance = setmetatable({}, cls)
             instance.class = cls
             instance:ctor(...)
             return instance
@@ -344,7 +347,6 @@ end
 function quick_class(classname, super)
     return class(classname, super)
 end
-
 
 --[[--
 
@@ -545,9 +547,12 @@ end
 
 ]]
 function math.newrandomseed()
-    local ok, socket = pcall( function()
-        return require("socket")
-    end )
+    local ok, socket =
+        pcall(
+        function()
+            return require("socket")
+        end
+    )
 
     if ok then
         -- 如果集成了 socket 模块，则使用 socket.gettime() 获取随机数种子
@@ -656,7 +661,9 @@ function io.writefile(path, content, mode)
     mode = mode or "w+b"
     local file = io.open(path, mode)
     if file then
-        if file:write(content) == nil then return false end
+        if file:write(content) == nil then
+            return false
+        end
         io.close(file)
         return true
     else
@@ -771,7 +778,7 @@ local keys = table.keys(hashtable)
 
 ]]
 function table.keys(hashtable)
-    local keys = { }
+    local keys = {}
     for k, v in pairs(hashtable) do
         keys[#keys + 1] = k
     end
@@ -796,7 +803,7 @@ local values = table.values(hashtable)
 
 ]]
 function table.values(hashtable)
-    local values = { }
+    local values = {}
     for k, v in pairs(hashtable) do
         values[#values + 1] = v
     end
@@ -880,7 +887,9 @@ local array = {"a", "b", "c"}
 ]]
 function table.indexof(array, value, begin)
     for i = begin or 1, #array do
-        if array[i] == value then return i end
+        if array[i] == value then
+            return i
+        end
     end
     return false
 end
@@ -904,7 +913,9 @@ local hashtable = {name = "dualface", comp = "chukong"}
 ]]
 function table.keyof(hashtable, value)
     for k, v in pairs(hashtable) do
-        if v == value then return k end
+        if v == value then
+            return k
+        end
     end
     return nil
 end
@@ -935,7 +946,9 @@ function table.removebyvalue(array, value, removeall)
             c = c + 1
             i = i - 1
             max = max - 1
-            if not removeall then break end
+            if not removeall then
+                break
+            end
         end
         i = i + 1
     end
@@ -1056,7 +1069,9 @@ end
 ]]
 function table.filter(t, fn)
     for k, v in pairs(t) do
-        if not fn(v, k) then t[k] = nil end
+        if not fn(v, k) then
+            t[k] = nil
+        end
     end
 end
 
@@ -1086,8 +1101,8 @@ end
 
 ]]
 function table.unique(t)
-    local check = { }
-    local n = { }
+    local check = {}
+    local n = {}
     for k, v in pairs(t) do
         if not check[v] then
             n[k] = v
@@ -1097,9 +1112,9 @@ function table.unique(t)
     return n
 end
 
-string._htmlspecialchars_set = { }
+string._htmlspecialchars_set = {}
 string._htmlspecialchars_set["&"] = "&amp;"
-string._htmlspecialchars_set["\""] = "&quot;"
+string._htmlspecialchars_set['"'] = "&quot;"
 string._htmlspecialchars_set["'"] = "&#039;"
 string._htmlspecialchars_set["<"] = "&lt;"
 string._htmlspecialchars_set[">"] = "&gt;"
@@ -1221,10 +1236,14 @@ local res = string.split(input, "-+-")
 function string.split(input, delimiter)
     input = tostring(input)
     delimiter = tostring(delimiter)
-    if (delimiter == '') then return false end
-    local pos, arr = 0, { }
+    if (delimiter == "") then
+        return false
+    end
+    local pos, arr = 0, {}
     -- for each divider found
-    for st, sp in function() return string.find(input, delimiter, pos, true) end do
+    for st, sp in function()
+        return string.find(input, delimiter, pos, true)
+    end do
         table.insert(arr, string.sub(input, pos, st - 1))
         pos = sp + 1
     end
@@ -1238,23 +1257,23 @@ start from 0 !
 ]]
 function string.CSformat(input, ...)
     input = tostring(input)
-    local arg = { ...}
-    local temp1 = input.split(input,'{')
+    local arg = {...}
+    local temp1 = input.split(input, "{")
     local s = ""
     for k, v in pairs(temp1) do
-        local pos ,_=string.find(v,'}')
-		if pos ~=nil then
-			local tempS = v.split(v,'}')
-			if #tempS == 2 then
-			    s = s .. arg[tonumber(tempS[1]) + 1] .. tempS[2]
-			elseif #tempS == 1 then
-			    s = s .. arg[tonumber(tempS[1]) + 1]
-			else
-			    return false
-			end
-		else 
-			s=s.. v
-		end
+        local pos, _ = string.find(v, "}")
+        if pos ~= nil then
+            local tempS = v.split(v, "}")
+            if #tempS == 2 then
+                s = s .. arg[tonumber(tempS[1]) + 1] .. tempS[2]
+            elseif #tempS == 1 then
+                s = s .. arg[tonumber(tempS[1]) + 1]
+            else
+                return false
+            end
+        else
+            s = s .. v
+        end
     end
     return tostring(s)
 end
@@ -1404,7 +1423,14 @@ local input = "hello%20world"
 ]]
 function string.urldecode(input)
     input = string.gsub(input, "+", " ")
-    input = string.gsub(input, "%%(%x%x)", function(h) return string.char(checknumber(h, 16)) end)
+    input =
+        string.gsub(
+        input,
+        "%%(%x%x)",
+        function(h)
+            return string.char(checknumber(h, 16))
+        end
+    )
     input = string.gsub(input, "\r\n", "\n")
     return input
 end
@@ -1430,9 +1456,9 @@ function string.utf8len(input)
     local len = string.len(input)
     local left = len
     local cnt = 0
-    local arr = { 0, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc }
+    local arr = {0, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc}
     while left ~= 0 do
-        local tmp = string.byte(input, - left)
+        local tmp = string.byte(input, -left)
         local i = #arr
         while arr[i] do
             if tmp >= arr[i] then
@@ -1466,8 +1492,10 @@ function string.formatnumberthousands(num)
     local formatted = tostring(checknumber(num))
     local k
     while true do
-        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
-        if k == 0 then break end
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", "%1,%2")
+        if k == 0 then
+            break
+        end
     end
     return formatted
 end
@@ -1480,12 +1508,15 @@ local type = type
 local pairs = pairs
 local tostring = tostring
 local next = next
- 
+
 function print_r(root)
-    if root == nil then print("nil") return end
-    local cache = { [root] = "." }
+    if root == nil then
+        print("nil")
+        return
+    end
+    local cache = {[root] = "."}
     local function _dump(t, space, name)
-        local temp = { }
+        local temp = {}
         if type(t) == "table" then
             for k, v in pairs(t) do
                 local key = tostring(k)
@@ -1494,7 +1525,10 @@ function print_r(root)
                 elseif type(v) == "table" then
                     local new_key = name .. "." .. key
                     cache[v] = new_key
-                    tinsert(temp, "+" .. key .. _dump(v, space ..(next(t, k) and "|" or " ") .. srep(" ", #key), new_key))
+                    tinsert(
+                        temp,
+                        "+" .. key .. _dump(v, space .. (next(t, k) and "|" or " ") .. srep(" ", #key), new_key)
+                    )
                 else
                     tinsert(temp, "+" .. key .. " [" .. tostring(v) .. "]")
                 end
@@ -1506,8 +1540,14 @@ function print_r(root)
 end
 
 string.split = function(s, p)
-    local rt = { }
-    string.gsub(s, '[^' .. p .. ']+', function(w) table.insert(rt, w) end)
+    local rt = {}
+    string.gsub(
+        s,
+        "[^" .. p .. "]+",
+        function(w)
+            table.insert(rt, w)
+        end
+    )
     return rt
 end
 
@@ -1516,7 +1556,9 @@ local function is_array(table)
     local count = 0
     for k, v in pairs(table) do
         if type(k) == "number" then
-            if k > max then max = k end
+            if k > max then
+                max = k
+            end
             count = count + 1
         else
             return -1
@@ -1546,7 +1588,7 @@ local function serialise_table(value, indent, depth)
     local max = is_array(value)
 
     local comma = false
-    local fragment = { "{" .. spacing2 }
+    local fragment = {"{" .. spacing2}
     if max > 0 then
         -- Serialise array
         for i = 1, max do
@@ -1562,9 +1604,10 @@ local function serialise_table(value, indent, depth)
             if comma then
                 table.insert(fragment, "," .. spacing2)
             end
-            table.insert(fragment,
-            ("[%s] = %s"):format(serialise_value(k, indent2, depth),
-            serialise_value(v, indent2, depth)))
+            table.insert(
+                fragment,
+                ("[%s] = %s"):format(serialise_value(k, indent2, depth), serialise_value(v, indent2, depth))
+            )
             comma = true
         end
     end
@@ -1574,29 +1617,34 @@ local function serialise_table(value, indent, depth)
 end
 
 function serialise_value(value, indent, depth)
-    if indent == nil then indent = "" end
-    if depth == nil then depth = 0 end
+    if indent == nil then
+        indent = ""
+    end
+    if depth == nil then
+        depth = 0
+    end
 
     if type(value) == "string" then
-        return("%q"):format(value)
-    elseif type(value) == "nil" or type(value) == "number" or
-        type(value) == "boolean" then
+        return ("%q"):format(value)
+    elseif type(value) == "nil" or type(value) == "number" or type(value) == "boolean" then
         return tostring(value)
     elseif type(value) == "table" then
         return serialise_table(value, indent, depth)
     else
-        return "\"<" .. type(value) .. ">\""
+        return '"<' .. type(value) .. '>"'
     end
 end
 
-function cleanClass(cs,classPath)
-    if cs == nil then return end
+function cleanClass(cs, classPath)
+    if cs == nil then
+        return
+    end
     if type(cs) ~= "table" then
         cs = nil
         return
     end
     setmetatable(cs, nil)
-    for k,v in pairs(cs) do
+    for k, v in pairs(cs) do
         cs[k] = nil
     end
     if classPath ~= nil then
@@ -1605,13 +1653,15 @@ function cleanClass(cs,classPath)
 end
 
 function cleanTable(tb)
-    if tb == nil then return end
+    if tb == nil then
+        return
+    end
     if type(tb) ~= "table" then
         tb = nil
         return
     end
     setmetatable(tb, nil)
-    for k,v in pairs(tb) do
+    for k, v in pairs(tb) do
         tb[k] = nil
         if type(v) == "table" then
             cleanTable(v)
@@ -1623,34 +1673,44 @@ function table.remove_if(table, func)
     -- body
     local ptr = 1
     local len = #table
-    for read=1,len do
+    for read = 1, len do
         local e = table[read]
-        if not func(e) then 
-            if ptr ~= read then 
-                table[ptr] = e 
+        if not func(e) then
+            if ptr ~= read then
+                table[ptr] = e
             end
             ptr = ptr + 1
         end
     end
-    for i = ptr,len do
+    for i = ptr, len do
         table[i] = nil
     end
 end
 
-function table.find_if(table,func)
+function table.find_if(table, func)
     local len = #table
-    for read=1,len do
+    for read = 1, len do
         local e = table[read]
-        if func(e) then 
+        if func(e) then
             return e
         end
     end
     return nil
 end
 
+function table.contains(table, ele)
+    local len = #table
+    for read = 1, len do
+        local e = table[read]
+        if e == ele then
+            return true
+        end
+    end
+    return false
+end
 
-function clamp( num,min,max )
-    if num <min then
+function clamp(num, min, max)
+    if num < min then
         num = min
     elseif num > max then
         num = max

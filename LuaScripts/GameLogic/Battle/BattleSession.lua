@@ -15,46 +15,57 @@ end
 
 function BattleSession.StartBattle(sessVO)
     _G.curSession = BattleSession.new(sessVO)
-    _G.curSession.stateMachine:SwitchState(BaseState.StateStage.PreGame)
+    return _G.curSession
 end
 
 -------------- csharp util function -------------------
+function BattleSession:EnterGame()
+    self.stateMachine:SwitchState(BaseState.StateStage.PreGame)
+end
 
-function BattleSession.GetUnitProperty(uid, name)
-    local unit = _G.curSession.field:GetUnitByUid(uid)
+function BattleSession:GetUnitProperty(uid, name)
+    local unit = self.field:GetUnitByUid(uid)
     if unit ~= nil then
         return unit.property:GetValue(name)
     end
 end
 
-function BattleSession.GetUnitCoord(uid)
-    local unit = _G.curSession.field:GetUnitByUid(uid)
+function BattleSession:GetUnitCoord(uid)
+    local unit = self.field:GetUnitByUid(uid)
     if unit ~= nil then
-        return unit.transform.position
+        return CS.UnityEngine.Vector2Int(unit.transform.position.x, unit.transform.position.y)
     end
 end
 
-function BattleSession.GetUnitDirection(uid)
-    local unit = _G.curSession.field:GetUnitByUid(uid)
+function BattleSession:GetUnitDirection(uid)
+    local unit = self.field:GetUnitByUid(uid)
     if unit ~= nil then
         return unit.transform.direction
     end
 end
 
-function BattleSession.IsGridMovable(uid, vector)
-    return _G.curSession.map:IsGridMovable(uid, vector)
+function BattleSession:IsGridMovable(uid, vector)
+    return self.map:IsGridMovable(uid, vector)
 end
 
-function BattleSession.GetReachableRegion(uid, distance)
-    return _G.curSession.map:GetReachableRegion(uid, distance)
+function BattleSession:GetReachableRegion(uid, distance)
+    return self.map:GetReachableRegion(uid, distance)
 end
 
-function BattleSession.GetPathToGoal(uid, vector)
-    return _G.curSession.map:GetPathToGoal(uid, vector)
+function BattleSession:GetPathToGoal(uid, vector)
+    return self.map:GetPathToGoal(uid, vector)
 end
 
-function BattleSession.UpdateReadyOrder(isReady, order)
+function BattleSession:UpdateReadyOrder(isReady, order)
     EventManager:Emit(EventConst.ON_PLAYCARD_READY_CHANGE, isReady, order)
+end
+
+function BattleSession:SelectUnit(uid)
+    if self.stateMachine.curState.key == BaseState.StateStage.PlayCard then
+        if self.field:GetUnitByUid(uid).camp == self.stateMachine.curActCamp then
+            EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, uid)
+        end
+    end
 end
 
 return BattleSession

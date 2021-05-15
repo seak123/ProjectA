@@ -1,6 +1,7 @@
 local LuaBehaviour = require("GameCore.Frame.LuaBehaviour")
 local BattleMainPanel = class("BattleMainPanel", LuaBehaviour)
 local InputOrder = require("GameLogic.Battle.Trace.InputOrder")
+local StateStage = require("GameLogic.Battle.StateMachine.States.BaseState").StateStage
 
 local BattleOpState = {}
 
@@ -44,7 +45,6 @@ local setting = {
             Name = "AnchorBottom/DiscardBtn",
             Alias = "DiscardBtn",
             Type = CS.UnityEngine.UI.Button,
-            Necessary = false,
             Handler = {
                 onClick = "OnReqDiscard"
             }
@@ -53,8 +53,7 @@ local setting = {
     Events = {
         [EventConst.ON_BATTLE_ROUND_BEGIN] = "OnRoundBegin",
         [EventConst.ON_SELECT_OP_UNIT] = "OnSelectUnit",
-        [EventConst.ON_SELECT_CARD] = "OnSelectCard",
-        [EventConst.ON_CANCEL_PLAYCARD] = "OnCancelCard",
+        [EventConst.ON_REFRESH_BATTLE_UI] = "RefreshCardView",
         [EventConst.ON_PLAYCARD_READY_CHANGE] = "OnReadyChange"
     }
 }
@@ -62,7 +61,6 @@ local setting = {
 function BattleMainPanel:ctor(obj)
     self.super.ctor(self, obj, setting)
     self.opUnit = nil
-    self.opCard = nil
     self.bReady = false
 
     self.CardView.getFunc = function(index)
@@ -73,7 +71,11 @@ function BattleMainPanel:ctor(obj)
     end
     self.CardView:Init("UI/Prefabs/Battle/UI_CardItem", 150)
 
-    self:RefreshCardView()
+    if curSession.stateMachine.curOpUnit ~= nil then
+        self:OnSelectUnit(curSession.stateMachine.curOpUnit.uid)
+    else
+        self:RefreshCardView()
+    end
 end
 
 function BattleMainPanel:OnAwake()
@@ -98,7 +100,7 @@ function BattleMainPanel:OnConfirm()
 end
 
 function BattleMainPanel:OnReqCancel()
-    EventManager:Emit(EventConst.ON_CANCEL_PLAYCARD)
+    EventManager:Emit(EventConst.ON_CANCEL_SELECT)
 end
 
 function BattleMainPanel:OnRoundBegin()
@@ -108,26 +110,20 @@ end
 
 function BattleMainPanel:OnSelectUnit(uid)
     self.opUnit = curSession.field:GetUnitByUid(uid)
-    self.opCard = nil
     self:RefreshCardView()
     self.CardView:RefreshView()
 end
 
-function BattleMainPanel:OnSelectCard(uid)
-    self.opCard = curSession.stateMachine.curOpUnit:GetHandCard(uid)
-    self:RefreshCardView()
-end
-
-function BattleMainPanel:OnCancelCard()
-    self.opCard = nil
-    self:RefreshCardView()
-end
-
 function BattleMainPanel:RefreshCardView()
+    local isInPlayState = curSession.stateMachine.curState.key == StateStage.PlayCard
+    local isInRoundEnd = curSession.stateMachine.curState.key == StateStage.RoundEnd
+    local hasSelectCard = #curSession.stateMachine.curSelectCards > 0
+
     self.UnitName.text = self.opUnit and self.opUnit.vo.Name or ""
-    self.PassBtn.gameObject:SetActive(self.opCard == nil)
-    self.CancelBtn.gameObject:SetActive(self.opCard ~= nil)
-    self.ConfirmBtn.gameObject:SetActive(self.bReady)
+    self.PassBtn.gameObject:SetActive(isInPlayState and not hasSelectCard)
+    self.CancelBtn.gameObject:SetActive(hasSelectCard)
+    self.ConfirmBtn.gameObject:SetActive(isInPlayState and self.bReady)
+    self.DiscardBtn.gameObject:SetActive(isInRoundEnd and hasSelectCard)
 end
 
 function BattleMainPanel:OnReadyChange(bReady, csOrder)
