@@ -54,7 +54,8 @@ local setting = {
         [EventConst.ON_BATTLE_ROUND_BEGIN] = "OnRoundBegin",
         [EventConst.ON_SELECT_OP_UNIT] = "OnSelectUnit",
         [EventConst.ON_REFRESH_BATTLE_UI] = "RefreshCardView",
-        [EventConst.ON_PLAYCARD_READY_CHANGE] = "OnReadyChange"
+        [EventConst.ON_PLAYCARD_READY_CHANGE] = "OnReadyChange",
+        [EventConst.ON_CARD_DROPED] = "OnDropCard"
     }
 }
 
@@ -114,16 +115,20 @@ function BattleMainPanel:OnSelectUnit(uid)
     self.CardView:RefreshView()
 end
 
+function BattleMainPanel:OnDropCard()
+    self.CardView:RefreshView()
+end
+
 function BattleMainPanel:RefreshCardView()
     local isInPlayState = curSession.stateMachine.curState.key == StateStage.PlayCard
-    local isInRoundEnd = curSession.stateMachine.curState.key == StateStage.RoundEnd
+    local isInDropState = curSession.stateMachine.curState.key == StateStage.DropCard
     local hasSelectCard = #curSession.stateMachine.curSelectCards > 0
 
     self.UnitName.text = self.opUnit and self.opUnit.vo.Name or ""
     self.PassBtn.gameObject:SetActive(isInPlayState and not hasSelectCard)
     self.CancelBtn.gameObject:SetActive(hasSelectCard)
     self.ConfirmBtn.gameObject:SetActive(isInPlayState and self.bReady)
-    self.DiscardBtn.gameObject:SetActive(isInRoundEnd and hasSelectCard)
+    self.DiscardBtn.gameObject:SetActive(isInDropState and hasSelectCard)
 end
 
 function BattleMainPanel:OnReadyChange(bReady, csOrder)
@@ -138,6 +143,11 @@ function BattleMainPanel:OnReadyChange(bReady, csOrder)
 end
 
 function BattleMainPanel:OnReqDiscard()
+    local order = InputOrder.new()
+    order.type = InputOrder.Type.Drop
+    order.unitUid = curSession.stateMachine.curOpUnit.uid
+    order.cards = curSession.stateMachine.curSelectCards
+    curSession.stateMachine:InputOrder(order)
 end
 
 return BattleMainPanel

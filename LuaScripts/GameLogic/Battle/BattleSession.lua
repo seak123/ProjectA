@@ -1,6 +1,7 @@
 local BattleSession = class("BattleSession")
 local StateMachine = require("GameLogic.Battle.StateMachine.StateMachine")
 local BaseState = require("GameLogic.Battle.StateMachine.States.BaseState")
+local StateStage = require("GameLogic.Battle.StateMachine.States.BaseState").StateStage
 local BattleField = require("GameLogic.Battle.BattleField")
 local BattleMap = require("GameLogic.Battle.Map.BattleMap")
 local Performer = require("GameLogic.Battle.BattlePerformer")
@@ -61,10 +62,14 @@ function BattleSession:UpdateReadyOrder(isReady, order)
 end
 
 function BattleSession:SelectUnit(uid)
-    if self.stateMachine.curState.key == BaseState.StateStage.PlayCard then
-        if self.field:GetUnitByUid(uid).camp == self.stateMachine.curActCamp then
-            EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, uid)
-        end
+    local isInPlayState = curSession.stateMachine.curState.key == StateStage.PlayCard
+    local isInDropState = curSession.stateMachine.curState.key == StateStage.DropCard
+    if isInPlayState and self.field:GetUnitByUid(uid).camp == self.stateMachine.curActCamp then
+        EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, uid)
+    end
+
+    if isInDropState then
+        EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, uid)
     end
 end
 

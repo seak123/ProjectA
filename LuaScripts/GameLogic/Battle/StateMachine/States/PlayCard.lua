@@ -21,11 +21,11 @@ function PlayCard:OnEnter()
     self.nextState = Base.StateStage.NoneStage
 
     EventManager:Emit(EventConst.ON_SELECT_OP_UNIT, opUnit.uid)
-    EventManager:On(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
+    EventManager:On(EventConst.ON_CARD_SELECTED, self.OnSelectCard, self)
 end
 
 function PlayCard:OnLeave()
-    EventManager:Off(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
+    EventManager:Off(EventConst.ON_CARD_SELECTED, self.OnSelectCard, self)
 end
 
 function PlayCard:InputOrder(order)
@@ -36,7 +36,8 @@ function PlayCard:InputOrder(order)
             local action = require(actions[i].actionType).new(actions[i].actionParams,actions[i].subActions)
             action:InputOrder(order.paramTable)
         end
-        curSession.stateMachine.curOpUnit:PlayACard(self.selectCard.uid)
+        local opUnit = curSession.field:GetUnitByUid(order.unitUid)
+        opUnit:PlayACard(self.selectCard.uid)
         curSession.stateMachine.passCounter = 0
     elseif order.type == Order.Type.Pass then
         curSession.stateMachine.passCounter = curSession.stateMachine.passCounter + 1

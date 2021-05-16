@@ -1,6 +1,5 @@
 local Base = require("GameLogic.Battle.Actions.PerformNode.BaseNode")
 local AnimNode = class("AnimNode", Base)
-local Direction = require("GameLogic.Battle.Map.BattleMap").Direction
 
 AnimNode.nodeType = Base.NodeType.Anim
 

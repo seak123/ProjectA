@@ -37,8 +37,7 @@ local setting = {
         }
     },
     Events = {
-        [EventConst.ON_SELECT_CARD] = "OnSelect",
-        [EventConst.ON_UNSELECT_CARD] = "OnCancel"
+        [EventConst.ON_REFRESH_BATTLE_UI] = "RefreshView",
     }
 }
 
@@ -73,9 +72,9 @@ end
 
 function CardItem:OnClick()
     if self.selected then
-        EventManager:Emit(EventConst.ON_UNSELECT_CARD, self.uid)
+        EventManager:Emit(EventConst.ON_REQ_UNSELECT_CARD, self.uid)
     else
-        EventManager:Emit(EventConst.ON_SELECT_CARD, self.uid)
+        EventManager:Emit(EventConst.ON_REQ_SELECT_CARD, self.uid)
     end
 end
 
@@ -87,16 +86,10 @@ function CardItem:OnLongPressEnd()
     EventManager:Emit(EventConst.ON_SHOW_CARD_DETAIL, false, 0)
 end
 
-function CardItem:OnSelect(uid)
-    self.selected = self.uid == uid
+function CardItem:RefreshView()
+    local isSelected = table.contains(curSession.stateMachine.curSelectCards,self.uid)
+    self.selected = isSelected
     self.Selected:SetActive(self.selected)
-end
-
-function CardItem:OnCancel(uid)
-    if uid == self.uid then
-        self.selected = false
-        self.Selected:SetActive(false)
-    end
 end
 
 return CardItem

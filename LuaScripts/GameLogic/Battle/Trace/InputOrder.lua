@@ -2,7 +2,8 @@ local Order = class("InputOrder")
 
 Order.Type = {
     Play = 0,
-    Pass = 1
+    Pass = 1,
+    Drop = 2,
 }
 
 function Order:ctor()
@@ -15,6 +16,7 @@ function Order:ParseFromCS(csOrder)
     elseif csOrder.type == CS.OrderType.Pass then
         self.type = Order.Type.Pass
     end
+    self.unitUid = curSession.stateMachine.curOpUnit.uid
     self.paramTable = {}
     -- unit params
     self.paramTable.units = {}

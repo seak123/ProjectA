@@ -4,6 +4,7 @@ local Property = require("GameLogic.Battle.Unit.Component.Property")
 local Transform = require("GameLogic.Battle.Unit.Component.Transform")
 local CardEntity = require("GameLogic.Battle.Card.CardEntity")
 local ComAnimRawAct = require("GameLogic.Battle.Actions.RawAction.ComAnimRawAction")
+local DeathNode = require("GameLogic.Battle.Actions.PerformNode.DeathNode")
 
 function Unit:ctor(unitVO)
     self.vo = unitVO
@@ -25,11 +26,26 @@ function Unit:InitComponents()
         table.insert(self.cardPile, card)
     end
 end
-
+----------- card logic -----------------------
 function Unit:DrawACard()
     if #self.cardPile > 0 then
         table.insert(self.handCards, self.cardPile[1])
         table.remove(self.cardPile, 1)
+    end
+end
+
+function Unit:DropACard(uid)
+    local card = nil
+    for i = 1, #self.handCards do
+        if self.handCards[i].uid == uid then
+            card = self.handCards[i]
+            table.remove(self.handCards, i)
+            break
+        end
+    end
+    if card then
+        table.insert(self.discardPile, card)
+        EventManager:Emit(EventConst.ON_CARD_DROPED, card.uid)
     end
 end
 
@@ -56,6 +72,12 @@ function Unit:GetHandCard(uid)
     return nil
 end
 
+function Unit:NeedDropNum()
+    return math.max(0, #self.handCards - self.vo.RoundEndKeepNum)
+end
+
+----------- card logic -----------------------
+
 function Unit:OnRoundBegin()
     for i = 1, self.vo.RoundDrawNum do
         self:DrawACard()
@@ -68,9 +90,19 @@ end
 
 function Unit:OnDamage(source, value)
     self.property:AddValue(self.property.PropDef.Hp, -value)
-    
-    ComAnimRawAct.Execute(self.uid,"Hurt")
-    curSession.performer:Fallback()
+    local hp = self.property:GetValue(self.property.PropDef.Hp)
+    if hp > 0 then
+        ComAnimRawAct.Execute(self.uid, "Hurt")
+        curSession.performer:Fallback()
+    else
+        curSession.field:RemoveUnit(self.uid)
+        ComAnimRawAct.Execute(self.uid, "Dead")
+        local deathNode = DeathNode.new()
+        deathNode.caster = self.uid
+        curSession.performer:PushNode(deathNode)
+        curSession.performer:Fallback()
+        curSession.performer:Fallback()
+    end
 end
 
 -------------- trigger start -----------------

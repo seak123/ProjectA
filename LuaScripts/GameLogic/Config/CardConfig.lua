@@ -114,7 +114,7 @@ this.Cards = {
                         actionType = ActionType.Damage,
                         actionParams = {
                             target = UnitParam.Enemy(1, 1),
-                            damage = 3,
+                            damage = 30,
                             delay = 0.1
                         }
                     }

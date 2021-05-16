@@ -29,6 +29,10 @@ function Map:CreateUnit(unit)
     local curGrid = self.grids[self:Coord2Index(unit.transform.position)]
     curGrid.standingUnit = unit
 end
+function Map:RemoveUnit(unit)
+    local curGrid = self.grids[self:Coord2Index(unit.transform.position)]
+    curGrid.standingUnit = nil
+end
 function Map:MoveUnit(unit, point)
     local direction = self.TurnUnitToPoint(unit, point)
     local goal = point

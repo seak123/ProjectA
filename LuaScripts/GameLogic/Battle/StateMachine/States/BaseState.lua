@@ -6,7 +6,8 @@ BaseState.StateStage = {
     RoundBegin = 3,
     PlayCard = 4,
     RoundEnd = 5,
-    GameEnd = 6
+    DropCard = 6,
+    GameEnd = 7
 }
 
 function BaseState:ctor(machine)

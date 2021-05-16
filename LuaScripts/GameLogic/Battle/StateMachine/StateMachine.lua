@@ -5,6 +5,7 @@ local RoundBegin = require("GameLogic.Battle.StateMachine.States.RoundBegin")
 local PlayCard = require("GameLogic.Battle.StateMachine.States.PlayCard")
 local RoundEnd = require("GameLogic.Battle.StateMachine.States.RoundEnd")
 local GameEnd = require("GameLogic.Battle.StateMachine.States.GameEnd")
+local DropCard = require("GameLogic.Battle.StateMachine.States.DropCard")
 local InputOrder = require("GameLogic.Battle.Trace.InputOrder")
 
 function Machine:ctor()
@@ -14,6 +15,7 @@ function Machine:ctor()
     self.states[BaseState.StateStage.PlayCard] = PlayCard.new(self)
     self.states[BaseState.StateStage.RoundEnd] = RoundEnd.new(self)
     self.states[BaseState.StateStage.GameEnd] = GameEnd.new(self)
+    self.states[BaseState.StateStage.DropCard] = DropCard.new(self)
 
     self.curState = nil
     self.curActCamp = 1 -- 行动方
@@ -24,8 +26,9 @@ function Machine:ctor()
 
     EventManager:On(EventConst.ON_SELECT_OP_UNIT, self.OnSelectOpUnit, self)
     EventManager:On(EventConst.ON_INPUT_ORDER, self.InputOrder, self)
-    EventManager:On(EventConst.ON_SELECT_CARD, self.OnSelectCard, self)
-    EventManager:On(EventConst.ON_UNSELECT_CARD, self.OnUnSelectCard, self)
+    EventManager:On(EventConst.ON_REQ_SELECT_CARD, self.OnSelectCard, self)
+    EventManager:On(EventConst.ON_CARD_DROPED, self.OnDropCard, self)
+    EventManager:On(EventConst.ON_REQ_UNSELECT_CARD, self.OnUnSelectCard, self)
     EventManager:On(EventConst.ON_CANCEL_SELECT, self.OnCanelAll, self)
 end
 
@@ -69,10 +72,23 @@ function Machine:OnSelectOpUnit(uid)
 end
 
 function Machine:OnSelectCard(uid)
-    if not table.contains(self.curSelectCards, uid) then
-        table.insert(self.curSelectCards, uid)
+    local isInPlayState = curSession.stateMachine.curState.key == BaseState.StateStage.PlayCard
+    local isInDropState = curSession.stateMachine.curState.key == BaseState.StateStage.DropCard
+
+    if isInPlayState then
+        if not table.contains(self.curSelectCards, uid) then
+            table.insert(self.curSelectCards, uid)
+            EventManager:Emit(EventConst.ON_CARD_SELECTED, uid)
+        end
+        EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
     end
-    EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
+    if isInDropState and #self.curSelectCards < self.curOpUnit:NeedDropNum() then
+        if not table.contains(self.curSelectCards, uid) then
+            table.insert(self.curSelectCards, uid)
+            EventManager:Emit(EventConst.ON_CARD_SELECTED, uid)
+        end
+        EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
+    end
 end
 
 function Machine:OnUnSelectCard(uid)
@@ -82,17 +98,26 @@ function Machine:OnUnSelectCard(uid)
             return ele == uid
         end
     )
+    EventManager:Emit(EventConst.ON_CARD_UNSELECTED, uid)
     EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
     self:NotifyPerformLayer()
 end
 
 function Machine:OnCanelAll()
     for i = 1, #self.curSelectCards do
-        EventManager:Emit(EventConst.ON_UNSELECT_CARD, self.curSelectCards[i])
+        EventManager:Emit(EventConst.ON_REQ_UNSELECT_CARD, self.curSelectCards[i])
     end
     self.curSelectCards = {}
-    EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
     self:NotifyPerformLayer()
+end
+
+function Machine:OnDropCard(uid)
+    table.remove_if(
+        self.curSelectCards,
+        function(ele)
+            return ele == uid
+        end
+    )
 end
 
 function Machine:NotifyPerformLayer()

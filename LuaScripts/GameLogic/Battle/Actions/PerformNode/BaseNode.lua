@@ -3,7 +3,8 @@ local BaseNode = class("BaseNode")
 BaseNode.NodeType = {
     Move = 1,
     Anim = 2,
-    Damage = 3
+    Damage = 3,
+    Death = 4,
 }
 
 BaseNode.event = ""

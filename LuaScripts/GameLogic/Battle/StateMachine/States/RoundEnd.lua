@@ -9,7 +9,7 @@ function RoundEnd:ctor(machine)
 end
 
 function RoundEnd:OnEnter()
-    self.nextState = Base.StateStage.RoundBegin
+    self.nextState = Base.StateStage.DropCard
 end
 
 function RoundEnd:OnLeave()
