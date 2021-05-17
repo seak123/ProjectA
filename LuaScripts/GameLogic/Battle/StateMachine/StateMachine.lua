@@ -34,6 +34,9 @@ end
 
 function Machine:InputOrder(order)
     self.curState:InputOrder(order)
+    if curSession.field:CheckResult() ~= -1 then
+        self.curState.nextState = BaseState.StateStage.GameEnd
+    end
     self:RunMachine()
 end
 
@@ -76,10 +79,9 @@ function Machine:OnSelectCard(uid)
     local isInDropState = curSession.stateMachine.curState.key == BaseState.StateStage.DropCard
 
     if isInPlayState then
-        if not table.contains(self.curSelectCards, uid) then
-            table.insert(self.curSelectCards, uid)
-            EventManager:Emit(EventConst.ON_CARD_SELECTED, uid)
-        end
+        self.curSelectCards = {}
+        table.insert(self.curSelectCards, uid)
+        EventManager:Emit(EventConst.ON_CARD_SELECTED, uid)
         EventManager:Emit(EventConst.ON_REFRESH_BATTLE_UI)
     end
     if isInDropState and #self.curSelectCards < self.curOpUnit:NeedDropNum() then

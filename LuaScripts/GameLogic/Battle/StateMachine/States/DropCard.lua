@@ -10,6 +10,7 @@ function DropCard:ctor(machine)
 end
 
 function DropCard:OnEnter()
+    self.nextState = Base.StateStage.NoneStage
     self:CheckDropState()
 end
 

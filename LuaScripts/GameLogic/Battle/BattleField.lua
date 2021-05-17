@@ -53,6 +53,29 @@ function Field:GetUnitByUid(uid)
         end
     end
 end
+
+function Field:CheckResult()
+    local friendNum = 0
+    local enemyNum = 0
+    self:ForeachUnit(
+        function(unit)
+            if unit.camp == 1 then
+                friendNum = friendNum + 1
+            else
+                enemyNum = enemyNum + 1
+            end
+        end
+    )
+    if friendNum == 0 and enemyNum > 0 then
+        return 2
+    elseif enemyNum == 0 and friendNum > 0 then
+        return 1
+    elseif enemyNum == 0 and friendNum == 0 then
+        return 0
+    else
+        return -1
+    end
+end
 ---------- Utils end -----------------
 
 return Field
