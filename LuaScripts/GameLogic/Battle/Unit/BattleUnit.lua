@@ -2,6 +2,7 @@ local Base = require("GameLogic.Battle.Unit.BaseUnit")
 local Unit = class("BattleUnit", Base)
 local Property = require("GameLogic.Battle.Unit.Component.Property")
 local Transform = require("GameLogic.Battle.Unit.Component.Transform")
+local BuffContainer = require("GameLogic.Battle.Unit.Component.BuffContainer")
 local CardEntity = require("GameLogic.Battle.Card.CardEntity")
 local ComAnimRawAct = require("GameLogic.Battle.Actions.RawAction.ComAnimRawAction")
 local DeathNode = require("GameLogic.Battle.Actions.PerformNode.DeathNode")
@@ -19,9 +20,10 @@ end
 function Unit:InitComponents()
     self.property = Property.new(self)
     self.transform = Transform.new(self)
+    self.container = BuffContainer.new(self)
 
     for i = 0, self.vo.Cards.Count - 1 do
-        local card = CardEntity.new(self.vo.Cards[i])
+        local card = CardEntity.new(self.vo.Cards[i], self)
         card.uid = i + 1
         table.insert(self.cardPile, card)
     end
@@ -29,8 +31,10 @@ end
 ----------- card logic -----------------------
 function Unit:DrawACard()
     if #self.cardPile > 0 then
-        table.insert(self.handCards, self.cardPile[1])
+        local card = self.cardPile[1]
+        table.insert(self.handCards, card)
         table.remove(self.cardPile, 1)
+        card:OnHand()
     end
 end
 
@@ -45,6 +49,7 @@ function Unit:DropACard(uid)
     end
     if card then
         table.insert(self.discardPile, card)
+        card:OnDiscard()
         EventManager:Emit(EventConst.ON_CARD_DROPED, card.uid)
     end
 end
